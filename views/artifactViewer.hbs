@@ -1,0 +1,337 @@
+{{!-- Start admin/student logic --}}
+{{#if isAdmin}}
+{{>adminLeftNav}}
+{{else}}
+{{>studentLeftNav}}
+{{/if}}
+{{!-- {{>studentLeftNav}} --}}
+{{!-- End admin/student logic --}}
+{{!-- Full body right of nav --}}
+<div class="ml-32 min-h-screen bg-ks-light-background dark:bg-ks-dark-background">
+    {{!-- Spot for top nav --}}
+    {{>topNav}}
+    {{!-- Main Content Body --}}
+    <div class="flex flex-col min-h-screen w-full items-center py-20">
+        {{!-- Embedded Media Viewers --}}
+        {{!-- Start Media Type Logic --}}
+        {{#if artifact}}
+        {{{mediaPlayer artifact.formatType artifact.location artifact.timestampORpageNumberORsection }}}
+        {{/if}}
+        {{!-- End Media Type Logic --}}
+        {{!-- Artifact Details --}}
+        <div class="flex flex-col w-9/12 my-3">
+            {{!-- Title, like, dislike, flag --}}
+            <div class="flex flex-row ">
+                <h2 class="text-xl font-medium text-ks-light-text dark:text-ks-dark-text">{{artifact.title}}</h2>
+                <div class="flex flex-row ml-auto text-lg space-x-3 text-ks-light-text dark:text-ks-dark-text">
+                    {{!-- Like --}}
+                    <div class="flex flex-row space-x-1 hover:cursor-pointer"
+                        onclick="toggleLike({{artifact.stampID}})">
+                        <input id="artifactIsLiked" type="hidden" value="{{artifact.hasThumbUp}}">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 {{#if artifact.hasThumbUp}} {{else}} hidden {{/if}}" fill="currentColor"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" id="isLikedIcon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 {{#if artifact.hasThumbUp}} hidden {{else}}  {{/if}}" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" id="isNotLikedIcon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                        </svg>
+                        <h3>Like</h3>
+                    </div>
+                    {{!-- Dislike --}}
+                    <div class="flex flex-row space-x-1 hover:cursor-pointer"
+                        onclick="toggleDislike({{artifact.stampID}})">
+                        <input id="artifactIsDisliked" type="hidden" value="{{artifact.hasThumbDown}}">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 {{#if artifact.hasThumbDown}} {{else}} hidden {{/if}}" fill="currentColor"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" id="isDislikedIcon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 {{#if artifact.hasThumbDown}} hidden {{else}}  {{/if}}" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" id="isNotDislikedIcon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
+                        </svg>
+                        <h3>Dislike</h3>
+                    </div>
+                    {{!-- Flag --}}
+                    <button class="flex flex-row space-x-1 hover:cursor-pointer disabled:hover:cursor-not-allowed"
+                        id="isFlaggedButton" onclick="toggleFlag({{artifact.stampID}}, {{isAdmin}}, event)" {{#if
+                        artifact.isFlagged}} {{#if isAdmin}} {{else}} disabled {{/if}} {{/if}}>
+                        <input id="artifactIsFlagged" type="hidden" value="{{artifact.isFlagged}}">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 {{#if artifact.isFlagged}}  {{else}} hidden {{/if}}" fill="currentColor"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" id="isFlaggedIcon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 {{#if artifact.isFlagged}} hidden {{else}}  {{/if}}" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" id="isNotFlaggedIcon">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                        </svg>
+                        <h3>Flag</h3>
+                    </button>
+                </div>
+            </div>
+            {{!-- Author - Views --}}
+            <div class="text-ks-light-subtext dark:text-ks-dark-subText">
+                <h2>{{artifact.author}} - {{artifact.views}} Views</h2>
+            </div>
+            {{!-- Description --}}
+            <div class="text-ks-light-subtext dark:text-ks-dark-subText">
+                <p class="leading-tight">Description - {{artifact.descr}} </p>
+            </div>
+            {{!-- Categories and Tags --}}
+            <div class="flex flex-row text-white gap-2 pt-2 flex-wrap">
+                {{#each artifact.categories}}
+                <div
+                    class="flex flex-row rounded-full py-1 px-2 space-x-1 flex-wrap {{#if isMatched}} bg-violet-700 {{else}} bg-violet-500  {{/if}}">
+                    <p class="px-1">{{catLabel}}</p>
+                    {{#each tags}}
+                    <p class="rounded-full px-2 {{#if isMatched}} bg-blue-700 {{else}} bg-blue-500 {{/if}}">
+                        {{tagLabel}}</p>
+                    {{/each}}
+                </div>
+                {{/each}}
+            </div>
+            {{!-- Admin Controls --}}
+            {{!-- Start admin/student logic --}}
+            {{#if isAdmin}}
+            <div class="flex flex-row ml-auto space-x-3">
+                <form action="/adminArtifactViewerUpdatePOST" method="POST">
+                    <input type="hidden" name="artifactID" value="{{artifact.artifactID}}">
+                    <input type="hidden" name="stampID" value="{{artifact.stampID}}">
+                    <button class="bg-orange-500 hover:bg-orange-700 text-white rounded-lg px-3 py-1 flex flex-row">
+                        Update<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </button>
+                </form>
+                <form action="/adminArtifactViewerDeletePOST" method="POST">
+                    <input type="hidden" name="stampID" value="{{artifact.stampID}}">
+                    <button class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-1 flex flew-row"
+                        onclick="deleteStamp(this, event)">
+                        Delete<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            {{/if}}
+            {{!-- End admin/student logic --}}
+        </div>
+    </div>
+</div>
+
+<script>
+
+    window.onload = (event) => {
+
+        if (document.getElementById('image')){
+            var image = document.getElementById('image')
+            var holdingDiv = image.parentNode
+            var location = image.getAttribute('data-location')
+            //console.log(location)
+            var xposition = location.slice(0, location.indexOf(','))
+            var yposition = location.slice(location.indexOf(',') + 2,)
+            //console.log(xposition)
+            //console.log(yposition)
+            holdingDiv.scrollTop = xposition
+            holdingDiv.scrollLeft = yposition
+        }
+    }
+
+    /*
+    function adjustPosition(obj, xposition, yposition){
+        var holdingDiv = obj.parentNode
+        console.log('xposition: ', xposition, 'yposition: ', yposition)
+        holdingDiv.scrollTop = xposition
+        holdingDiv.scrollLeft = yposition
+    }
+    */
+
+    function deleteStamp(obj, e) {
+        e.preventDefault()
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Once deleted, this action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete the stamp'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                obj.parentNode.submit()
+            }
+        })
+    }
+
+    function toggleLike(id) {
+
+        var isLiked = (document.getElementById('artifactIsLiked').value === '1')
+        var isDisliked = (document.getElementById('artifactIsDisliked').value === '1')
+        //console.log('isLiked', isLiked)
+        //console.log('isLiked Source', document.getElementById('artifactIsLiked').value)
+
+        fetch('/toggleLikePOST', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                isLiked: isLiked,
+                isDisliked: isDisliked,
+                id: id
+            })
+        }).then((res) => {
+            res.json().then((body) => {
+                var b = body
+                if (b.success) {
+                    if (b.isLiked) {
+                        document.getElementById('isLikedIcon').classList.toggle('hidden')
+                        document.getElementById('isNotLikedIcon').classList.toggle('hidden')
+                        document.getElementById('artifactIsLiked').value = '1'
+                        //increase like count
+                    } else {
+                        //console.log('here')
+                        document.getElementById('isLikedIcon').classList.toggle('hidden')
+                        document.getElementById('isNotLikedIcon').classList.toggle('hidden')
+                        document.getElementById('artifactIsLiked').value = '0'
+                        //decrease like count
+                    }
+                    if (b.toggleDislike) {
+                        document.getElementById('isDislikedIcon').classList.toggle('hidden')
+                        document.getElementById('isNotDislikedIcon').classList.toggle('hidden')
+                        document.getElementById('artifactIsDisliked').value = '0'
+                        //decrease dislike count
+                    }
+                }
+            })
+        })
+    }
+
+    function toggleDislike(id) {
+
+        var isLiked = (document.getElementById('artifactIsLiked').value === '1')
+        var isDisliked = (document.getElementById('artifactIsDisliked').value === '1')
+
+        fetch('/toggleDislikePOST', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                isLiked: isLiked,
+                isDisliked: isDisliked,
+                id: id
+            })
+        }).then((res) => {
+            res.json().then((body) => {
+                var b = body
+                if (b.success) {
+                    if (b.isDisliked) {
+                        document.getElementById('isDislikedIcon').classList.toggle('hidden')
+                        document.getElementById('isNotDislikedIcon').classList.toggle('hidden')
+                        document.getElementById('artifactIsDisliked').value = '1'
+                        //increase like count
+                    } else {
+                        document.getElementById('isDislikedIcon').classList.toggle('hidden')
+                        document.getElementById('isNotDislikedIcon').classList.toggle('hidden')
+                        document.getElementById('artifactIsDisliked').value = '0'
+                        //decrease like count
+                    }
+                    if (b.toggleLike) {
+                        document.getElementById('isLikedIcon').classList.toggle('hidden')
+                        document.getElementById('isNotLikedIcon').classList.toggle('hidden')
+                        document.getElementById('artifactIsLiked').value = '0'
+                        //decrease dislike count
+                    }
+                }
+            })
+        })
+
+    }
+
+    function toggleFlag(id, isAdmin, e) {
+        e.preventDefault()
+        var isFlagged = (document.getElementById('artifactIsFlagged').value === '1')
+        if (!isFlagged) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Once you flag a stamp, only an admin can remove the flag.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, flag the stamp'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/toggleFlagPOST', {
+                        method: 'POST',
+                        headers: {
+                            'Content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            isFlagged: isFlagged,
+                            id: id
+                        })
+                    }).then((res) => {
+                        res.json().then((body) => {
+                            var b = body
+                            if (b.success) {
+                                document.getElementById('isFlaggedIcon').classList.toggle('hidden')
+                                document.getElementById('isNotFlaggedIcon').classList.toggle('hidden')
+                                document.getElementById('artifactIsFlagged').value = '1'
+                                if (!isAdmin) {
+                                    document.getElementById('isFlaggedButton').disabled = true
+                                }
+                            }
+                        })
+                    })
+                }
+            })
+        } else {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Once resolved, this action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, resolve the flag'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    //fetch post
+                    fetch('/toggleFlagPOST', {
+                        method: 'POST',
+                        headers: {
+                            'Content-type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            isFlagged: isFlagged,
+                            id: id
+                        })
+                    }).then((res) => {
+                        res.json().then((body) => {
+                            var b = body
+                            if (b.success) {
+                                document.getElementById('isFlaggedIcon').classList.toggle('hidden')
+                                document.getElementById('isNotFlaggedIcon').classList.toggle('hidden')
+                                document.getElementById('artifactIsFlagged').value = '0'
+                            }
+                        })
+                    })
+                }
+            })
+        }
+    }
+
+</script>

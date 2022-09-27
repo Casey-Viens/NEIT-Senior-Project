@@ -1,0 +1,88 @@
+{{>adminLeftNav}}
+<div class="ml-32 bg-ks-light-background dark:bg-ks-dark-background">
+    {{>topNav dbResults}}
+    <h2 class="text-ks-light-text dark:text-ks-dark-text"> Search Page</h2>
+    <div class="flex flex-col min-h-screen w-full justify-items-center items-center space-y-2">
+        {{!-- {{resultSetHelper}} --}}
+        {{!-- Example of looping through dbResults passed from pages.js --}}
+        {{!-- Note: Reference object first in #each, then properties inside loop.  Also, handlebars seems to treat a list of lists as a property (i.e. need to use dot-notation to access a list within a list).  --}}
+        <h1 style="font-weight: bold;">List of Authors</h1>
+        {{#each dbResults.[0]}}  
+            <h2>{{this}}</h2>
+        {{/each}}
+        <br / >
+
+        <h1 style="font-weight: bold;">List of Titles</h1>
+        {{#each dbResults.[1]}}  
+            <h2>{{this}}</h2>
+        {{/each}}
+        <br / >
+
+        <h1 style="font-weight: bold;">List of Format Types</h1>
+        {{#each dbResults.[2]}}  
+            <h2>{{this}}</h2>
+        {{/each}}
+        <br / >
+
+        <h1 style="font-weight: bold;">List of Categories</h1>
+        {{#each dbResults.[3]}}  
+            <h2>{{this}}</h2>
+        {{/each}}
+        <br / >
+
+        <h1 style="font-weight: bold;">List of Tags</h1>
+        {{#each dbResults.[4]}}  
+            <h2>{{this}}</h2>
+        {{/each}}
+        <br / >
+
+        <h1 style="font-weight: bold;">List of Stamps</h1>
+        {{#each dbResults.[5]}}  
+            <h2>Artifact ID:{{artifactID}}</h2>
+            <h2>User ID: {{userID}}</h2>
+            <h2>Title: {{title}}</h2>
+            <h2>Author: {{author}}</h2>
+            <h2>Views: {{views}}</h2>
+            <h2>Description: {{descr}}</h2>
+            <h2>Format Type: {{views}}</h2>
+            <h2>Location: {{location}}</h2>
+            <h2>Stamp ID: {{stampID}}</h2>
+            <h2>Timestamp: {{aTimestamp}}</h2>
+            <h2>Page Number: {{pageNumber}}</h2>
+            <h2>Section Percentage: {{sectionPercentage}}</h2>
+            <h2>Short Name: {{shortName}}</h2>
+            <h2>Thumbs Up Count: {{thumbsUpCount}}</h2>
+            <h2>Thumbs Down Count: {{thumbsDownCount}}</h2>
+            <h2>Is Flagged: {{isFlagged}}</h2>
+            <br />
+        {{/each}}
+        
+        {{#each dbResults.[5]}}
+        <div class="flex flew-row w-10/12 space-x-2">        
+            <div class="flex flex-col w-1/4">
+                <img src="https://havecamerawilltravel.com/wp-content/uploads/2020/01/YouTube-Thumbnail-Size-Graphic.png"
+                    alt="thumbnail" class="aspect-video">
+            </div>
+            <div class="flex flex-col grow">
+                <h2 class="text-2xl text-ks-light-text dark:text-ks-dark-text">{{title}}</h2>
+                <h3 class="text-base text-ks-light-subText dark:text-ks-dark-subText">{{author}} - {{views}} Views</h3>
+                <h3 class="text-base text-ks-light-subText dark:text-ks-dark-subText">{{descr}}</h3>
+                <div class="flex flex-row text-white space-x-2 pt-2">
+                    <div class="flex flex-row rounded-full py-1 px-2 space-x-1 bg-violet-700">
+                        <p class="px-1">Category1</p>
+                        <p class="rounded-full px-2 bg-blue-700">Tag1</p>
+                        <p class="rounded-full px-2 bg-blue-500">Tag2</p>
+                        <p class="rounded-full px-2 bg-blue-500">Tag3</p>
+                    </div>
+                    <div class="flex flex-row rounded-full py-1 px-2 space-x-1 bg-violet-500">
+                        <p class="px-1">Category2</p>
+                        <p class="rounded-full px-2 bg-blue-500">Tag1</p>
+                        <p class="rounded-full px-2 bg-blue-500">Tag2</p>
+                        <p class="rounded-full px-2 bg-blue-500">Tag3</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>

@@ -1,0 +1,1070 @@
+{{>adminLeftNav}}
+{{!-- Full body right of nav --}}
+<div class="ml-32 min-h-screen bg-ks-light-background dark:bg-ks-dark-background">
+    {{!-- Spot for top nav --}}
+    {{>topNav}}
+
+    {{#if isUpload}}
+    {{!-- Main Content Body --}}
+    <div class="flex flex-col min-h-screen w-full items-center py-20">
+        {{!-- Embedded Media Viewers --}}
+        {{!-- Start Media Type Logic --}}
+        {{{indexerMediaPlayer format source}}}
+        {{!-- Youtube --}}
+
+        {{!-- Artifact Details Form --}}
+        <form action="adminIndexerPageSavePOST" method="POST" class="flex flex-col w-9/12 my-3">
+            {{!-- Hidden Data --}}
+            <input type="hidden" name="artifact[source]" value="{{source}}">
+            <input type="hidden" name="artifact[format]" value="{{format}}">
+            {{!-- Title, Author --}}
+            <div class="flex flex-row w-full space-x-2">
+                <div class="flex flex-col">
+                    <label for="title" class="font-medium text-ks-light-text dark:text-ks-dark-text">Title</label>
+                    <input type="text" id="title" name="artifact[title]" size="50" required pattern=".+\S"
+                        class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                </div>
+                <div class="flex flex-col">
+                    <label for="author" class="font-medium text-ks-light-text dark:text-ks-dark-text">Author</label>
+                    <input type="text" id="author" name="artifact[author]" size="30" required pattern=".+\S"
+                        class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                </div>
+            </div>
+            {{!-- Description --}}
+            <div class="flex flex-row w-full">
+                <div class="flex flex-col w-full">
+                    <label for="description"
+                        class="font-medium text-ks-light-text dark:text-ks-dark-text">Description</label>
+                    <textarea name="artifact[description]" id="description" rows="10" required pattern=".+\S"
+                        class="w-full px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border"></textarea>
+                </div>
+            </div>
+            {{!-- Hidden Stamp Tab --}}
+            <button id="stamp#Tab" onClick="selectStamp(this, event)"
+                class="hidden active px-3 py-2 border-x border-t border-ks-light-border dark:border-ks-dark-border rounded-t-lg bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive hover:bg-ks-light-foregroundHover hover:dark:bg-ks-dark-foregroundHover font-medium text-ks-light-text dark:text-ks-dark-text">
+                Stamp1Title
+            </button>
+            {{!-- Folder Container --}}
+            <div class="flex flex-col w-full mt-3">
+                {{!-- Stamp Folder Tabs --}}
+                <div class="flex flex-row w-full ml-4 space-x-1">
+                    <div id="stampTabsContainer" class="flex flex-row space-x-1 flex-wrap-reverse">
+                        {{!-- Tabs --}}
+                        <button id="stamp0Tab" onClick="selectStamp(this, event)"
+                            class="active px-3 py-2 border-x border-t border-ks-light-border dark:border-ks-dark-border rounded-t-lg bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive hover:bg-ks-light-foregroundHover hover:dark:bg-ks-dark-foregroundHover font-medium text-ks-light-text dark:text-ks-dark-text">
+                            Stamp1Title
+                        </button>
+
+                        {{!-- End Tabs --}}
+                    </div>
+                    <button onclick="addStamp(event)"
+                        class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-1 my-auto min-w-fit">Add
+                        Stamp</button>
+                </div>
+                <div id="stampFolderContainer" class="w-full h-full">
+                    {{!-- Hidden Tag --}}
+                    <div id="hiddenTag"
+                        class="hidden rounded-full px-2 bg-blue-400 text-white flex-row items-center space-x-1 my-1 py-1">
+                        Tag1 <svg onclick="removeTag(this, event)" xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 text-red-500 hover:cursor-pointer" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <input type="number" readonly="true" class="hidden">
+                    </div>
+
+                    {{!-- Hidden Stamp Folder used for creating new folders --}}
+                    {{!-- Input names empty to prevent data submission --}}
+                    <div id="stampFolder#"
+                        class="hidden flex-col w-full border border-ks-light-border dark:border-ks-dark-border rounded-t-lg ">
+                        {{!-- Stamp Folder Header --}}
+                        <div
+                            class="flex flex-row rounded-t-lg py-3 w-full border-b border-ks-light-border dark:border-ks-dark-border space-x-2 bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive">
+                            {{!-- Location --}}
+                            <div class="flex flex-col ml-3">
+                                {{{adminIndexerLocationInput format true}}}
+                            </div>
+                            <div class="flex">
+                                <input type="hidden" id="stamp#ID" value="">
+                                {{{adminIndexerLocationButton format}}}
+                            </div>
+                            {{!-- Title --}}
+                            <div class="flex flex-col">
+                                <label for="stampTitle"
+                                    class="font-medium text-ks-light-text dark:text-ks-dark-text">Stamp
+                                    Title</label>
+                                <input onchange="updateStampTitle(this)" type="text" id="stamp#Title" size="30"
+                                    pattern=".+\S"
+                                    class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                            </div>
+                            <button onclick="createCategory(event)"
+                                class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                                Category</button>
+                            <button onclick="removeStamp(this,event)"
+                                class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-2 my-auto">Remove
+                                Stamp</button>
+                        </div>
+                        {{!-- Stamp Folder Contents --}}
+                        <div class="flex flex-col w-full p-3 bg-ks-light-foreground dark:bg-ks-dark-foreground">
+                            {{!-- Category Folder Tabs --}}
+                            <div class="flex flex-row w-full pl-4 space-x-1">
+                                {{!-- Tabs --}}
+                                <div class="flex flex-row space-x-1 flex-wrap-reverse">
+                                    <button onClick="selectCategory(this, event)"
+                                        class="active px-3 py-2 border-x border-t border-ks-light-border dark:border-ks-dark-border rounded-t-lg bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive hover:bg-ks-light-foregroundHover hover:dark:bg-ks-dark-foregroundHover font-medium text-ks-light-text dark:text-ks-dark-text">
+                                        Category1
+                                    </button>
+                                </div>
+                                {{!-- End Tabs --}}
+                                <button onclick="addCategory(this,event)"
+                                    class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-1 my-auto min-w-fit">Add
+                                    Category</button>
+                            </div>
+                            <div id="stamp#categoryFolder" class="w-full h-full">
+                                {{!-- Category Folder --}}
+                                <div id="stamp#category0"
+                                    class="flex flex-col w-full border border-ks-light-border dark:border-ks-dark-border rounded-t-lg ">
+                                    {{!-- Category Folder Header --}}
+                                    <div
+                                        class="flex flex-row rounded-t-lg py-3 w-full border-b border-ks-light-border dark:border-ks-dark-border space-x-2 bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive">
+                                        {{!-- Category --}}
+                                        <div class="flex flex-col ml-3">
+                                            <label for="category"
+                                                class="font-medium text-ks-light-text dark:text-ks-dark-text">Category
+                                            </label>
+                                            <select onfocus="updateCategoryOptions(this, event)"
+                                                onChange="updateCategoryTitle(this, event)" id="stamp#categoryTitle0"
+                                                class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                                                <option value="">Category Title</option>
+                                            </select>
+                                        </div>
+                                        <button onclick="createTag(event)"
+                                            class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                                            Tag</button>
+                                        <button onclick="removeCategory(this,event)"
+                                            class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-2 my-auto">Remove
+                                            Category</button>
+                                    </div>
+                                    {{!-- Category Folder Contents --}}
+                                    <div class="flex flex-row w-full p-3 space-x-1">
+                                        <div id="stamp#category#tags"
+                                            class="flex flex-row space-x-1 flex-wrap min-h-fit">
+                                            {{!-- Tags --}}
+
+
+                                            {{!-- End Tags --}}
+                                            <button onclick="addTag(this,event)"
+                                                class="bg-green-500 hover:bg-green-700 text-white rounded-full px-3 py-1 my-1 min-w-fit">Add
+                                                Tag</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    {{!-- Stamp Folder 1 --}}
+                    <div id="stampFolder0"
+                        class="flex flex-col w-full border border-ks-light-border dark:border-ks-dark-border rounded-t-lg ">
+                        {{!-- Stamp Folder Header --}}
+                        <div
+                            class="flex flex-row rounded-t-lg py-3 w-full border-b border-ks-light-border dark:border-ks-dark-border space-x-2 bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive">
+                            {{!-- Location --}}
+                            <div class="flex flex-col ml-3">
+                                {{{adminIndexerLocationInput format false 0}}}
+                            </div>
+                            <div class="flex">
+                                <input type="hidden" value="" id="stamp0ID" name="artifact[stamps][0][id]">
+                                {{{adminIndexerLocationButton format}}}
+                            </div>
+                            {{!-- Title --}}
+                            <div class="flex flex-col">
+                                <label for="stampTitle"
+                                    class="font-medium text-ks-light-text dark:text-ks-dark-text">Stamp
+                                    Title</label>
+                                <input onchange="updateStampTitle(this)" type="text" id="stamp0Title"
+                                    name="artifact[stamps][0][title]" size="30" pattern=".+\S" required
+                                    class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                            </div>
+                            <button onclick="createCategory(event)"
+                                class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                                Category</button>
+                            <button onclick="removeStamp(this, event)"
+                                class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-2 my-auto">Remove
+                                Stamp</button>
+                        </div>
+                        {{!-- Stamp Folder Contents --}}
+                        <div class="flex flex-col w-full p-3 bg-ks-light-foreground dark:bg-ks-dark-foreground">
+                            {{!-- Category Folder Tabs --}}
+                            <div class="flex flex-row w-full pl-4 space-x-1">
+                                {{!-- Tabs --}}
+                                <div class="flex flex-row space-x-1 flex-wrap-reverse">
+                                    <button onclick="selectCategory(this,event)"
+                                        class="active px-3 py-2 border-x border-t border-ks-light-border dark:border-ks-dark-border rounded-t-lg bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive hover:bg-ks-light-foregroundHover hover:dark:bg-ks-dark-foregroundHover font-medium text-ks-light-text dark:text-ks-dark-text">
+                                        Category1
+                                    </button>
+
+                                </div>
+                                {{!-- End Tabs --}}
+                                <button onclick="addCategory(this,event)"
+                                    class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-1 my-auto min-w-fit">Add
+                                    Category</button>
+                            </div>
+                            <div id="stamp0categoryFolder" class="w-full h-full">
+                                {{!-- Category Folder --}}
+                                <div id="stamp0category0"
+                                    class="flex flex-col w-full border border-ks-light-border dark:border-ks-dark-border rounded-t-lg ">
+                                    {{!-- Category Folder Header --}}
+                                    <div
+                                        class="flex flex-row rounded-t-lg py-3 w-full border-b border-ks-light-border dark:border-ks-dark-border space-x-2 bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive">
+                                        {{!-- Category --}}
+                                        <div class="flex flex-col ml-3">
+                                            <label for="category"
+                                                class="font-medium text-ks-light-text dark:text-ks-dark-text">Category
+                                            </label>
+                                            <select onfocus="updateCategoryOptions(this, event)"
+                                                onChange="updateCategoryTitle(this, event)" id="stamp0categoryTitle0"
+                                                name="artifact[stamps][0][categories][0][category]"
+                                                class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                                                <option value="">Category Title</option>
+                                            </select>
+                                        </div>
+                                        <button onclick="createTag(event)"
+                                            class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                                            Tag</button>
+                                        <button onclick="removeCategory(this,event)"
+                                            class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-2 my-auto">Remove
+                                            Category</button>
+                                    </div>
+                                    {{!-- Category Folder Contents --}}
+                                    <div class="flex flex-row w-full p-3">
+                                        {{!-- Tags --}}
+                                        <div id="stamp0category0tags"
+                                            class="flex flex-row space-x-1 flex-wrap min-h-fit">
+                                            {{!-- End Tags --}}
+                                            <button onclick="addTag(this,event)"
+                                                class="bg-green-500 hover:bg-green-700 text-white rounded-full px-3 py-1 min-w-fit my-1">Add
+                                                Tag</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{!-- Stamp Folder 2 --}}
+
+                </div>
+            </div>
+            {{!-- End Folder Container --}}
+            <div class="flex flex-row ml-auto space-x-3 mt-3">
+                <span id="formIsInvalidSpan" class="hidden text-red-500">Invalid stamp input, please review all
+                    stamps.</span>
+            </div>
+            {{!-- Admin Controls --}}
+            <div class="flex flex-row ml-auto space-x-3 mt-3">
+                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-1">
+                    Save
+                </button>
+        </form>
+        {{#if isLink}}
+        <a href="adminUpload" class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-1">
+            Cancel
+        </a>
+        {{else}}
+        <form action="/adminIndexerPageSaveCancelPOST" method="POST">
+            <input type="hidden" name="awsKey" value="{{awsKey}}">
+            <button class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-1">
+                Cancel
+            </button>
+        </form>
+        {{/if}}
+    </div>
+</div>
+{{!-- End Admin Controls --}}
+{{/if}}
+{{#if isUpdate}}
+{{!-- Main Content Body --}}
+<div class="flex flex-col min-h-screen w-full items-center py-20">
+    {{!-- Embedded Media Viewers --}}
+    {{!-- Start Media Type Logic --}}
+    {{{indexerMediaPlayer artifact.formatType artifact.location}}}
+
+    {{!-- Artifact Details Form --}}
+    <form action="adminIndexerPageUpdatePOST" method="POST" class="flex flex-col w-9/12 my-3">
+        {{!-- Hidden Data --}}
+        <input type="hidden" name="artifact[source]" value="{{artifact.location}}">
+        <input type="hidden" name="artifact[format]" value="{{artifact.formatType}}">
+        {{!-- Title, Author --}}
+        <div class="flex flex-row w-full space-x-2">
+            <div class="flex flex-col">
+                <label for="title" class="font-medium text-ks-light-text dark:text-ks-dark-text">Title</label>
+                <input type="text" id="title" name="artifact[title]" size="50" required pattern=".+\S"
+                    class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border"
+                    value="{{artifact.artifactTitle}}">
+            </div>
+            <div class="flex flex-col">
+                <label for="author" class="font-medium text-ks-light-text dark:text-ks-dark-text">Author</label>
+                <input type="text" id="author" name="artifact[author]" size="30" required pattern=".+\S"
+                    class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border"
+                    value="{{artifact.author}}">
+            </div>
+        </div>
+        {{!-- Description --}}
+        <div class="flex flex-row w-full">
+            <div class="flex flex-col w-full">
+                <label for="description"
+                    class="font-medium text-ks-light-text dark:text-ks-dark-text">Description</label>
+                <textarea name="artifact[description]" id="description" rows="10" required pattern=".+\S"
+                    class="w-full px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">{{artifact.description}}</textarea>
+            </div>
+        </div>
+        {{!-- Hidden Stamp Tab --}}
+        <button id="stamp#Tab" onClick="selectStamp(this, event)"
+            class="hidden active px-3 py-2 border-x border-t border-ks-light-border dark:border-ks-dark-border rounded-t-lg bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive hover:bg-ks-light-foregroundHover hover:dark:bg-ks-dark-foregroundHover font-medium text-ks-light-text dark:text-ks-dark-text">
+            Stamp1Title
+        </button>
+        {{!-- Folder Container --}}
+        <div class="flex flex-col w-full mt-3">
+            {{!-- Stamp Folder Tabs --}}
+            <div class="flex flex-row w-full ml-4 space-x-1">
+                <div id="stampTabsContainer" class="flex flex-row space-x-1 flex-wrap-reverse">
+                    {{!-- Tabs --}}
+                    {{!-- Start Stamp Loop --}}
+                    {{#each artifact.stamps as |stamp stampIndex|}}
+                    <button id="stamp{{stampIndex}}Tab" onClick="selectStamp(this, event)"
+                        class="{{{adminIndexerUpdateisActive stampIndex}}} px-3 py-2 border-x border-t border-ks-light-border dark:border-ks-dark-border rounded-t-lg hover:bg-ks-light-foregroundHover hover:dark:bg-ks-dark-foregroundHover font-medium text-ks-light-text dark:text-ks-dark-text">
+                        {{stamp.stampTitle}}
+                    </button>
+                    {{/each}}
+                    {{!-- End Stamp Loop --}}
+                    {{!-- End Tabs --}}
+                </div>
+                <button onclick="addStamp(event)"
+                    class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-1 my-auto min-w-fit">Add
+                    Stamp</button>
+            </div>
+            <div id="stampFolderContainer" class="w-full h-full">
+                {{!-- Hidden Tag --}}
+                <div id="hiddenTag"
+                    class="hidden rounded-full px-2 bg-blue-400 text-white flex-row items-center space-x-1 my-1 py-1">
+                    Tag1 <svg onclick="removeTag(this, event)" xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6 text-red-500 hover:cursor-pointer" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <input type="number" readonly="true" class="hidden">
+                </div>
+
+                {{!-- Hidden Stamp Folder used for creating new folders --}}
+                {{!-- Input names empty to prevent data submission --}}
+                <div id="stampFolder#"
+                    class="hidden flex-col w-full border border-ks-light-border dark:border-ks-dark-border rounded-t-lg ">
+                    {{!-- Stamp Folder Header --}}
+                    <div
+                        class="flex flex-row rounded-t-lg py-3 w-full border-b border-ks-light-border dark:border-ks-dark-border space-x-2 bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive">
+                        {{!-- Location --}}
+                        <div class="flex flex-col ml-3">
+                            {{{adminIndexerLocationInput artifact.formatType true}}}
+                        </div>
+                        <div class="flex">
+                            <input type="hidden" id="stamp#ID" value="">
+                            {{{adminIndexerLocationButton artifact.formatType}}}
+                        </div>
+                        {{!-- Title --}}
+                        <div class="flex flex-col">
+                            <label for="stampTitle" class="font-medium text-ks-light-text dark:text-ks-dark-text">Stamp
+                                Title</label>
+                            <input onchange="updateStampTitle(this)" type="text" id="stamp#Title" size="30"
+                                pattern=".+\S"
+                                class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        </div>
+                        <button onclick="createCategory(event)"
+                            class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                            Category</button>
+                        <button onclick="removeStamp(this,event)"
+                            class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-2 my-auto">Remove
+                            Stamp</button>
+                    </div>
+                    {{!-- Stamp Folder Contents --}}
+                    <div class="flex flex-col w-full p-3 bg-ks-light-foreground dark:bg-ks-dark-foreground">
+                        {{!-- Category Folder Tabs --}}
+                        <div class="flex flex-row w-full pl-4 space-x-1">
+                            {{!-- Tabs --}}
+                            <div class="flex flex-row space-x-1 flex-wrap-reverse">
+                                <button onClick="selectCategory(this, event)"
+                                    class="active px-3 py-2 border-x border-t border-ks-light-border dark:border-ks-dark-border rounded-t-lg bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive hover:bg-ks-light-foregroundHover hover:dark:bg-ks-dark-foregroundHover font-medium text-ks-light-text dark:text-ks-dark-text">
+                                    Category1
+                                </button>
+                            </div>
+                            {{!-- End Tabs --}}
+                            <button onclick="addCategory(this,event)"
+                                class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-1 my-auto min-w-fit">Add
+                                Category</button>
+                        </div>
+                        <div id="stamp#categoryFolder" class="w-full h-full">
+                            {{!-- Category Folder --}}
+                            <div id="stamp#category0"
+                                class="flex flex-col w-full border border-ks-light-border dark:border-ks-dark-border rounded-t-lg ">
+                                {{!-- Category Folder Header --}}
+                                <div
+                                    class="flex flex-row rounded-t-lg py-3 w-full border-b border-ks-light-border dark:border-ks-dark-border space-x-2 bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive">
+                                    {{!-- Category --}}
+                                    <div class="flex flex-col ml-3">
+                                        <label for="category"
+                                            class="font-medium text-ks-light-text dark:text-ks-dark-text">Category
+                                        </label>
+                                        <select onfocus="updateCategoryOptions(this, event)"
+                                            onChange="updateCategoryTitle(this, event)" id="stamp#categoryTitle0"
+                                            class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                                            <option value="">Category Title</option>
+                                        </select>
+                                    </div>
+                                    <button onclick="createTag(event)"
+                                        class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                                        Tag</button>
+                                    <button onclick="removeCategory(this,event)"
+                                        class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-2 my-auto">Remove
+                                        Category</button>
+                                </div>
+                                {{!-- Category Folder Contents --}}
+                                <div class="flex flex-row w-full p-3 space-x-1">
+                                    <div id="stamp#category#tags" class="flex flex-row space-x-1 flex-wrap min-h-fit">
+                                        {{!-- Tags --}}
+
+
+                                        {{!-- End Tags --}}
+                                        <button onclick="addTag(this,event)"
+                                            class="bg-green-500 hover:bg-green-700 text-white rounded-full px-3 py-1 my-1 min-w-fit">Add
+                                            Tag</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                {{!-- Start Stamp Loop --}}
+                {{#each artifact.stamps as |stamp stampIndex|}}
+                {{!-- Stamp Folder 1 --}}
+                <div id="stampFolder{{stampIndex}}"
+                    class="{{{adminIndexerUpdateFlexOrHidden stampIndex}}} flex-col w-full border border-ks-light-border dark:border-ks-dark-border rounded-t-lg ">
+                    {{!-- Stamp Folder Header --}}
+                    <div
+                        class="flex flex-row rounded-t-lg py-3 w-full border-b border-ks-light-border dark:border-ks-dark-border space-x-2 bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive">
+                        {{!-- Location --}}
+                        <div class="flex flex-col ml-3">
+                            {{{adminIndexerUpdateLocationInput stamp.formatTypeDuplicate false stampIndex
+                            stamp.timestampORpageNumberORsection}}}
+                        </div>
+                        <div class="flex">
+                            <input type="hidden" value="{{stamp.stampID}}" id="stamp{{stampIndex}}ID"
+                                name="artifact[stamps][{{stampIndex}}][id]">
+                            {{{adminIndexerLocationButton stamp.formatTypeDuplicate}}}
+                        </div>
+                        {{!-- Title --}}
+                        <div class="flex flex-col">
+                            <label for="stampTitle" class="font-medium text-ks-light-text dark:text-ks-dark-text">Stamp
+                                Title</label>
+                            <input onchange="updateStampTitle(this)" type="text" id="stamp{{stampIndex}}Title"
+                                name="artifact[stamps][{{stampIndex}}][title]" size="30" value="{{stamp.stampTitle}}"
+                                pattern=".+\S" required
+                                class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        </div>
+                        <button onclick="createCategory(event)"
+                            class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                            Category</button>
+                        <button onclick="removeStamp(this, event)"
+                            class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-2 my-auto">Remove
+                            Stamp</button>
+                    </div>
+                    {{!-- Stamp Folder Contents --}}
+                    <div class="flex flex-col w-full p-3 bg-ks-light-foreground dark:bg-ks-dark-foreground">
+                        {{!-- Category Folder Tabs --}}
+                        <div class="flex flex-row w-full pl-4 space-x-1">
+                            {{!-- Tabs --}}
+                            <div class="flex flex-row space-x-1 flex-wrap-reverse">
+                                {{#each stamp.categories as |cat catIndex|}}
+                                <button onclick="selectCategory(this,event)"
+                                    class="{{{adminIndexerUpdateisActive catIndex}}} px-3 py-2 border-x border-t border-ks-light-border dark:border-ks-dark-border rounded-t-lg hover:bg-ks-light-foregroundHover hover:dark:bg-ks-dark-foregroundHover font-medium text-ks-light-text dark:text-ks-dark-text">
+                                    {{cat.catLabel}}
+                                </button>
+                                {{/each}}
+                            </div>
+                            {{!-- End Tabs --}}
+                            <button onclick="addCategory(this,event)"
+                                class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-1 my-auto min-w-fit">Add
+                                Category</button>
+                        </div>
+                        <div id="stamp{{stampIndex}}categoryFolder" class="w-full h-full">
+                            {{!-- Category Folder --}}
+                            {{#each stamp.categories as |cat catIndex|}}
+                            <div id="stamp{{stampIndex}}category{{catIndex}}"
+                                class="{{{adminIndexerUpdateFlexOrHidden catIndex}}} flex-col w-full border border-ks-light-border dark:border-ks-dark-border rounded-t-lg ">
+                                {{!-- Category Folder Header --}}
+                                <div
+                                    class="flex flex-row rounded-t-lg py-3 w-full border-b border-ks-light-border dark:border-ks-dark-border space-x-2 bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive">
+                                    {{!-- Category --}}
+                                    <div class="flex flex-col ml-3">
+                                        <label for="category"
+                                            class="font-medium text-ks-light-text dark:text-ks-dark-text">Category
+                                        </label>
+                                        <select onfocus="updateCategoryOptions(this, event)"
+                                            onChange="updateCategoryTitle(this, event)"
+                                            id="stamp{{stampIndex}}categoryTitle{{catIndex}}"
+                                            name="artifact[stamps][{{stampIndex}}][categories][{{catIndex}}][category]"
+                                            class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                                            <option value="{{cat.catID}}">{{cat.catLabel}}</option>
+                                        </select>
+                                    </div>
+                                    <button onclick="createTag(event)"
+                                        class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                                        Tag</button>
+                                    <button onclick="removeCategory(this,event)"
+                                        class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-2 my-auto">Remove
+                                        Category</button>
+                                </div>
+                                {{!-- Category Folder Contents --}}
+                                <div class="flex flex-row w-full p-3">
+                                    {{!-- Tags --}}
+                                    <div id="stamp{{stampIndex}}category{{catIndex}}tags"
+                                        class="flex flex-row space-x-1 flex-wrap min-h-fit">
+                                        {{#each cat.tags as |tag tagIndex|}}
+                                        <div id="stamp{{stampIndex}}category{{catIndex}}tag{{tagIndex}}"
+                                            class="flex rounded-full px-2 bg-blue-400 text-white flex-row items-center space-x-1 my-1 py-1">
+                                            {{tag.tagLabel}} <svg onclick="removeTag(this, event)"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="h-6 w-6 text-red-500 hover:cursor-pointer" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <input type="number" readonly="true" class="hidden" value="{{tag.tagID}}"
+                                                name="artifact[stamps][{{stampIndex}}][categories][{{catIndex}}][tags][{{tagIndex}}][id]"
+                                                id="stamp{{stampIndex}}category{{catIndex}}tag{{tagIndex}}">
+                                        </div>
+                                        {{/each}}
+                                        {{!-- End Tags --}}
+                                        <button onclick="addTag(this,event)"
+                                            class="bg-green-500 hover:bg-green-700 text-white rounded-full px-3 py-1 min-w-fit my-1">Add
+                                            Tag</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+
+                {{!-- Stamp Folder 2 --}}
+
+            </div>
+        </div>
+        {{!-- End Folder Container --}}
+        <div class="flex flex-row ml-auto space-x-3 mt-3">
+            <span id="formIsInvalidSpan" class="hidden text-red-500">Invalid stamp input, please review all
+                stamps.</span>
+        </div>
+        {{!-- Admin Controls --}}
+        <div class="flex flex-row ml-auto space-x-3 mt-3">
+            <input type="hidden" name="artifactID" value="{{artifact.artifactID}}">
+            <input type="hidden" name="stampID" value="{{stampID}}">
+            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-1">
+                Update
+            </button>
+    </form>
+    <form action="/adminIndexerPageDeletePOST" method="POST">
+        <input type="hidden" name="artifactID" value="{{artifact.artifactID}}">
+        <input type="hidden" name="aws" value="{{artifact.location}}">
+        <input type="hidden" name="format" value="{{artifact.formatType}}">
+        <button onclick="confirmArtifactDelete(this, event)"
+            class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-1">
+            Delete
+        </button>
+    </form>
+    <a href="/artifactViewer?id={{stampID}}" class="bg-orange-500 hover:bg-orange-700 text-white rounded-lg px-3 py-1">
+        Cancel
+    </a>
+</div>
+</div>
+{{!-- End Admin Controls --}}
+{{/if}}
+</div>
+<script>
+
+    var categoryArray
+    var tagArray
+
+    window.onload = (event) => {
+
+        getCatandTagArrays()
+    }
+
+    function formIsInvalid() {
+        var span = document.getElementById('formIsInvalidSpan')
+        span.classList.remove('hidden')
+    }
+
+    function getCatandTagArrays() {
+        fetch('/adminIndexerCategoriesAndTagsGET', {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json'
+            },
+        }).then((res) => {
+            res.json().then((body) => {
+                var b = body
+                //console.log('topnav arrays received')
+                categoryArray = b.catArray
+                tagArray = b.tagArray
+                //console.log('autocomplete lists', autocompleteLists)
+            })
+        })
+    }
+
+    function confirmArtifactDelete(obj, e) {
+        e.preventDefault()
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Once deleted, this action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete the artifact'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                obj.parentNode.submit()
+            }
+        })
+    }
+
+    function setLocation(obj, e, format) {
+        e.preventDefault()
+
+        var formField = obj.parentNode.parentNode.children[0].children[1]
+        console.log(formField)
+
+        var mediaPlayer = document.getElementById('mediaPlayer')
+        var location
+
+        if (format == 'Link') {
+            location = mediaPlayer.currentTime
+            console.log(location)
+        } else if (format == '.PNG') {
+            location = mediaPlayer.scrollLeft + ', ' + mediaPlayer.scrollTop
+            formField.value = location
+            console.log(location)
+        } else if (format == '.MP4' || format == '.MP3') {
+            location = mediaPlayer.currentTime
+            formField.value = new Date(location * 1000).toISOString().substr(11, 8);
+            // location in seconds as double
+            //console.log(location)
+        } else if (format == '.PDF') {
+
+        }
+    }
+
+    function createTag(e) {
+        e.preventDefault()
+
+        Swal.fire({
+            title: 'Enter new tag',
+            input: 'text',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to provide a tag.'
+                } else if (Object.values(tagArray).includes(value)) {
+                    return 'This tag already exists.'
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/createTagPost', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tagName: result.value
+                    })
+                }).then((res) => {
+                    res.json().then((body) => {
+                        tagArray[body.data.id] = body.data.tagName
+                    })
+                })
+            }
+        })
+    }
+
+    function createCategory(e) {
+        e.preventDefault()
+
+        Swal.fire({
+            title: 'Enter new category',
+            input: 'text',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to provide a category.'
+                } else if (Object.values(categoryArray).includes(value)) {
+                    return 'This category already exists.'
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/createCategoryPost', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        categoryName: result.value
+                    })
+                }).then((res) => {
+                    res.json().then((body) => {
+                        categoryArray[body.data.id] = body.data.categoryName
+                    })
+                })
+            }
+        })
+    }
+
+    function updateStampTitle(obj) {
+        //get stamp index
+        var stampIndex = obj.id.slice(obj.id.indexOf('stamp') + 5, obj.id.indexOf('Title'))
+        //console.log(stampIndex)
+        // get stamp tab
+        var stampTab = document.getElementById('stamp' + stampIndex + 'Tab')
+        // update stamp tab innertext
+        stampTab.innerText = obj.value
+    }
+
+    function updateCategoryTitle(obj, e) {
+
+        //var stampIndex = obj.parentNode.parentNode.parentNode.id.slice(obj.parentNode.parentNode.parentNode.id.indexOf('stamp') + 5, obj.parentNode.parentNode.parentNode.id.indexOf('category') - 1)
+        var categoryIndex = obj.parentNode.parentNode.parentNode.id.slice(obj.parentNode.parentNode.parentNode.id.indexOf('category') + 8,)
+        var categoryTab = obj.parentNode.parentNode.parentNode.parentNode.parentNode.children[0].children[0].children[categoryIndex]
+        categoryTab.innerText = obj.options[obj.selectedIndex].text
+
+    }
+
+    function updateCategoryOptions(obj, e) {
+
+        if (obj.options.length <= 1) {
+            obj.options.length = 0;
+
+            for (index in categoryArray) {
+                obj.options[obj.options.length] = new Option(categoryArray[index], index)
+            }
+
+            // select first option
+            obj.selectedIndex = "0"
+            // run copy of updateCategoryTitleCode
+            var categoryIndex = obj.parentNode.parentNode.parentNode.id.slice(obj.parentNode.parentNode.parentNode.id.indexOf('category') + 8,)
+            var categoryTab = obj.parentNode.parentNode.parentNode.parentNode.parentNode.children[0].children[0].children[categoryIndex]
+            categoryTab.innerText = obj.options[obj.selectedIndex].text
+        } else {
+            obj.options.length = 0;
+
+            for (index in categoryArray) {
+                obj.options[obj.options.length] = new Option(categoryArray[index], index)
+            }
+        }
+
+    }
+
+
+    function selectStamp(obj, e) {
+        e.preventDefault();
+
+        var stampTabsContainer = obj.parentNode
+        // loop through parent element, find active class, get index from id, set bg color
+        var activeStamp = stampTabsContainer.querySelector('.active')
+        var activeStampIndex = activeStamp.id.slice(5, 6)
+        //console.log(activeStampIndex)
+        activeStamp.classList.remove('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+        activeStamp.classList.add('bg-ks-light-background', 'dark:bg-ks-dark-background')
+        // set current element background color
+        obj.classList.add('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+        obj.classList.remove('bg-ks-light-background', 'dark:bg-ks-dark-background')
+        // get active stampfolder based on index and id
+        var activeStampFolder = document.getElementById('stampFolder' + activeStampIndex)
+        // set hidden
+        activeStampFolder.classList.replace('flex', 'hidden')
+        // get current element index from id
+        var selectedStampIndex = obj.id.slice(5, 6)
+        // get stampFolder based on index and id
+        var selectedStampFolder = document.getElementById('stampFolder' + selectedStampIndex)
+        // remove hidden
+        selectedStampFolder.classList.replace('hidden', 'flex')
+    }
+
+    function addStamp(e) {
+        e.preventDefault()
+        var hiddenStampTab = document.getElementById('stamp#Tab')
+        var stampTabsContainer = document.getElementById('stampTabsContainer')
+        var stampTab = hiddenStampTab.cloneNode(true)
+        var stampIndex = stampTabsContainer.childElementCount
+        stampTab.innerHTML = 'Stamp' + (stampIndex + 1) + 'Title'
+        stampTab.id = stampTab.id.slice(0, 5) + stampIndex + stampTab.id.slice(6,)
+        if (stampTab.classList.contains('active') && stampIndex > 0) {
+            stampTab.classList.remove('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+            stampTab.classList.add('bg-ks-light-background', 'dark:bg-ks-dark-background')
+        }
+        stampTab.classList.remove('hidden')
+        stampTabsContainer.appendChild(stampTab)
+
+        //get stamp folder container
+        var stampFolderContainer = document.getElementById('stampFolderContainer')
+        var hiddenStampFolder = document.getElementById('stampFolder#')
+        // clone hidden folder
+        var tempStampFolder = hiddenStampFolder.cloneNode(true)
+        // edit names and ids
+        tempStampFolder.id = 'stampFolder' + stampIndex
+        tempStampFolder.children[0].children[0].children[1].id = 'stamp' + stampIndex + 'location'
+        tempStampFolder.children[0].children[0].children[1].name = 'artifact[stamps][' + stampIndex + '][location]'
+        tempStampFolder.children[0].children[0].children[1].required = true
+        tempStampFolder.children[0].children[1].children[0].id = 'stamp' + stampIndex + 'ID'
+        tempStampFolder.children[0].children[1].children[0].name = 'artifact[stamps][' + stampIndex + '][id]'
+        tempStampFolder.children[0].children[2].children[1].id = 'stamp' + stampIndex + 'Title'
+        tempStampFolder.children[0].children[2].children[1].name = 'artifact[stamps][' + stampIndex + '][title]'
+        tempStampFolder.children[0].children[2].children[1].required = true
+        tempStampFolder.children[1].children[1].id = 'stamp' + stampIndex + 'categoryFolder'
+        tempStampFolder.children[1].children[1].children[0].id = 'stamp' + stampIndex + 'category0'
+        tempStampFolder.children[1].children[1].children[0].children[0].children[0].children[1].id = 'stamp' + stampIndex + 'categoryTitle0'
+        tempStampFolder.children[1].children[1].children[0].children[0].children[0].children[1].name = 'artifact[stamps][' + stampIndex + '][categories][0][category]'
+        tempStampFolder.children[1].children[1].children[0].children[1].children[0].id = 'stamp' + stampIndex + 'category0tags'
+
+        if (stampIndex == 0) {
+            tempStampFolder.classList.replace('hidden', 'flex')
+        }
+        // append to folder container
+        stampFolderContainer.appendChild(tempStampFolder)
+    }
+
+    function removeStamp(obj, e) {
+        e.preventDefault()
+
+        var stampIndex = obj.parentNode.parentNode.id.slice(11)
+        var stampFolder = document.getElementById('stampFolder' + stampIndex)
+        var stampTabsContainer = document.getElementById('stampTabsContainer')
+        var stampFolderContainer = document.getElementById('stampFolderContainer')
+        var stampTab = stampTabsContainer.children[stampIndex]
+
+        if (stampTab.classList.contains('active')) {
+            if (stampIndex == 0 && stampTabsContainer.childElementCount > 1) {
+                stampTabsContainer.children[1].classList.add('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+                stampTabsContainer.children[1].classList.remove('bg-ks-light-background', 'dark:bg-ks-dark-background')
+                stampFolderContainer.children[3].classList.replace('hidden', 'flex')
+            } else {
+                stampTabsContainer.children[0].classList.add('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+                stampTabsContainer.children[0].classList.remove('bg-ks-light-background', 'dark:bg-ks-dark-background')
+                stampFolderContainer.children[2].classList.replace('hidden', 'flex')
+            }
+        }
+
+        for (i = parseInt(stampIndex) + 1; i < stampTabsContainer.childElementCount; i++) {
+            if (stampTabsContainer.children[i].innerHTML == 'Stamp' + (i + 1) + 'Title') {
+                stampTabsContainer.children[i].innerHTML = 'Stamp' + i + 'Title'
+            }
+            stampTabsContainer.children[i].id = 'stamp' + (i - 1) + 'Tab'
+        }
+
+        for (i = parseInt(stampIndex) + 3; i < stampFolderContainer.childElementCount; i++) {
+            stampFolderContainer.children[i].id = 'stampFolder' + (i - 3)
+            stampFolderContainer.children[i].children[0].children[0].children[1].id = 'stamp' + (i - 3) + 'location'
+            stampFolderContainer.children[i].children[0].children[0].children[1].name = 'artifact[stamps][' + (i - 3) + '][location]'
+            stampFolderContainer.children[i].children[0].children[1].children[0].id = 'stamp' + (i - 3) + 'ID'
+            stampFolderContainer.children[i].children[0].children[1].children[0].name = 'artifact[stamps][' + (i - 3) + '][id]'
+            stampFolderContainer.children[i].children[0].children[2].children[1].id = 'stamp' + (i - 3) + 'Title'
+            stampFolderContainer.children[i].children[0].children[2].children[1].name = 'artifact[stamps][' + (i - 3) + '][title]'
+            stampFolderContainer.children[i].children[1].children[1].id = 'stamp' + (i - 3) + 'categoryFolder'
+            for (c = 0; c < stampFolderContainer.children[i].children[1].children[1].childElementCount; c++) {
+                stampFolderContainer.children[i].children[1].children[1].children[c].id = 'stamp' + (i - 3) + 'category' + c
+                stampFolderContainer.children[i].children[1].children[1].children[c].children[0].children[0].children[1].id = 'stamp' + (i - 3) + 'categoryTitle' + c
+                stampFolderContainer.children[i].children[1].children[1].children[c].children[0].children[0].children[1].name = 'artifact[stamps][' + (i - 3) + '][categories][' + c + '][category]'
+                stampFolderContainer.children[i].children[1].children[1].children[c].children[1].children[0].id = 'stamp' + (i - 3) + 'category' + c + 'tags'
+                if (stampFolderContainer.children[i].children[1].children[1].children[c].children[1].children[0].childElementCount > 1) {
+                    for (t = 0; t < stampFolderContainer.children[i].children[1].children[1].children[c].children[1].children[0].childElementCount - 1; t++) {
+                        stampFolderContainer.children[i].children[1].children[1].children[c].children[1].children[0].children[t].children[1].id = 'stamp' + (i - 3) + 'category' + c + 'tag' + t
+                        stampFolderContainer.children[i].children[1].children[1].children[c].children[1].children[0].children[t].children[1].name = "artifact[stamps][" + (i - 3) + "][categories][" + c + "][tags][" + t + "][id]"
+                    }
+                }
+            }
+
+        }
+
+        stampFolder.remove()
+        stampTab.remove()
+
+    }
+
+    function selectCategory(obj, e) {
+
+        e.preventDefault();
+
+        var categoryTabsContainer = obj.parentNode
+        var stampIndex = obj.parentNode.parentNode.parentNode.parentNode.id.slice(11)
+        // loop through parent element, find active class, get index from id, set bg color
+        if (Array.from(obj.parentNode.children).indexOf(categoryTabsContainer.querySelector('.active')) != -1) {
+            var activeCategory = categoryTabsContainer.querySelector('.active')
+            var activeCategoryIndex = Array.from(obj.parentNode.children).indexOf(activeCategory)
+            //console.log(activeCategoryIndex)
+            activeCategory.classList.remove('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+            activeCategory.classList.add('bg-ks-light-background', 'dark:bg-ks-dark-background')
+            // get active stampfolder based on index and id
+            var activeCategoryFolder = document.getElementById('stamp' + stampIndex + 'category' + activeCategoryIndex)
+            // set hidden
+            activeCategoryFolder.classList.replace('flex', 'hidden')
+        }
+        // set current element background color
+        obj.classList.add('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+        obj.classList.remove('bg-ks-light-background', 'dark:bg-ks-dark-background')
+
+        // get current element index from id
+        var selectedCategoryIndex = Array.from(obj.parentNode.children).indexOf(obj)
+        // get stampFolder based on index and id
+        var selectedCategoryFolder = document.getElementById('stamp' + stampIndex + 'category' + selectedCategoryIndex)
+        // remove hidden
+        selectedCategoryFolder.classList.replace('hidden', 'flex')
+
+    }
+
+    function addCategory(obj, e) {
+        e.preventDefault()
+
+        var tempCategoryTab = document.getElementById('stampFolder#').children[1].children[0].children[0].children[0].cloneNode(true)
+        var categoryIndex = obj.parentNode.firstElementChild.childElementCount
+        //console.log('categoryIndex--', obj.parentNode.firstElementChild.childElementCount)
+        tempCategoryTab.innerHTML = 'Category' + (categoryIndex + 1)
+
+        if (tempCategoryTab.classList.contains('active') && categoryIndex > 0) {
+            tempCategoryTab.classList.remove('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+            tempCategoryTab.classList.add('bg-ks-light-background', 'dark:bg-ks-dark-background')
+        }
+        obj.parentNode.firstElementChild.appendChild(tempCategoryTab)
+
+        // get stamp#category0
+        var templateCategoryFolder = document.getElementById('stamp#category0')
+        tempCategoryFolder = templateCategoryFolder.cloneNode(true)
+        // update name and ids
+        var stampIndex = obj.parentNode.parentNode.parentNode.id.slice(11)
+        tempCategoryFolder.id = 'stamp' + stampIndex + 'category' + categoryIndex
+        tempCategoryFolder.children[0].children[0].children[1].id = 'stamp' + stampIndex + 'categoryTitle' + categoryIndex
+        tempCategoryFolder.children[0].children[0].children[1].name = 'artifact[stamps][' + stampIndex + '][categories][' + categoryIndex + '][category]'
+        tempCategoryFolder.children[1].children[0].id = 'stamp' + stampIndex + 'category' + categoryIndex + 'tags'
+
+        if (categoryIndex != 0) {
+            tempCategoryFolder.classList.replace('flex', 'hidden')
+        }
+
+        var stampCategoryFolder = document.getElementById('stamp' + stampIndex + 'categoryFolder')
+        stampCategoryFolder.appendChild(tempCategoryFolder)
+
+    }
+
+    function removeCategory(obj, e) {
+        e.preventDefault()
+
+        var stampIndex = obj.parentNode.parentNode.id.slice(obj.parentNode.parentNode.id.indexOf('stamp') + 5, obj.parentNode.parentNode.id.indexOf('category'))
+        var categoryIndex = obj.parentNode.parentNode.id.slice(obj.parentNode.parentNode.id.indexOf('category') + 8,)
+        var categoryTabFolder = obj.parentNode.parentNode.parentNode.parentNode.children[0].children[0]
+        var categoryTab = categoryTabFolder.children[categoryIndex]
+        var stampCategoryFolder = document.getElementById('stamp' + stampIndex + 'categoryFolder')
+        var categoryFolder = document.getElementById('stamp' + stampIndex + 'category' + categoryIndex)
+
+        if (categoryTab.classList.contains('active')) {
+            if (categoryIndex == 0 && categoryTabFolder.childElementCount > 1) {
+                categoryTabFolder.children[1].classList.add('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+                categoryTabFolder.children[1].classList.remove('bg-ks-light-background', 'dark:bg-ks-dark-background')
+                stampCategoryFolder.children[1].classList.replace('hidden', 'flex')
+            } else {
+                categoryTabFolder.children[0].classList.add('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+                categoryTabFolder.children[0].classList.remove('bg-ks-light-background', 'dark:bg-ks-dark-background')
+                stampCategoryFolder.children[0].classList.replace('hidden', 'flex')
+            }
+        }
+
+        for (i = parseInt(categoryIndex) + 1; i < categoryTabFolder.childElementCount; i++) {
+            if (categoryTabFolder.children[i].innerHTML == 'Category' + (i + 1)) {
+                categoryTabFolder.children[i].innerHTML = 'Category' + i
+            }
+        }
+
+        for (i = parseInt(categoryIndex) + 1; i < stampCategoryFolder.childElementCount; i++) {
+            stampCategoryFolder.children[i].id = 'stamp' + stampIndex + 'category' + (i - 1)
+            stampCategoryFolder.children[i].children[0].children[0].children[1].id = 'stamp' + stampIndex + 'categoryTitle' + (i - 1)
+            stampCategoryFolder.children[i].children[0].children[0].children[1].name = 'artifact[stamps][' + stampIndex + '][categories][' + (i - 1) + '][category]'
+            stampCategoryFolder.children[i].children[1].children[0].id = 'stamp' + stampIndex + 'category' + (i - 1) + 'tags'
+            if (stampCategoryFolder.children[i].children[1].children[0].childElementCount > 1) {
+                for (t = 0; t < stampCategoryFolder.children[i].children[1].children[0].childElementCount - 1; t++) {
+                    stampCategoryFolder.children[i].children[1].children[0].children[t].children[1].id = 'stamp' + stampIndex + 'category' + (i - 1) + 'tag' + t
+                    stampCategoryFolder.children[i].children[1].children[0].children[t].children[1].name = "artifact[stamps][" + stampIndex + "][categories][" + (i - 1) + "][tags][" + t + "][id]"
+                }
+            }
+        }
+
+        categoryFolder.remove()
+        categoryTab.remove()
+    }
+
+    function addTag(obj, e) {
+        e.preventDefault()
+
+        Swal.fire({
+            title: 'Select tag to add',
+            input: 'select',
+            inputOptions: tagArray,
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                /*
+                console.log(result)
+                console.log(result.value)
+                console.log(tagArray[result.value])
+                */
+
+                var tempTag = document.getElementById('hiddenTag').cloneNode(true)
+                tempTag.id = ''
+
+                //get stamp category id
+                var stampIndex = obj.parentNode.id.slice(obj.parentNode.id.indexOf('stamp') + 5, obj.parentNode.id.indexOf('category'))
+                var categoryIndex = obj.parentNode.id.slice(obj.parentNode.id.indexOf('category') + 8, obj.parentNode.id.indexOf('tags'))
+
+                tempTag.children[1].id = 'stamp' + stampIndex + 'category' + categoryIndex + 'tag' + (obj.parentNode.childElementCount - 1)
+                tempTag.children[1].name = 'artifact[stamps][' + stampIndex + '][categories][' + categoryIndex + '][tags][' + (obj.parentNode.childElementCount - 1) + '][id]'
+
+                tempTag.classList.replace('hidden', 'flex')
+                //update tag innerhtml
+                tempTag.firstChild.data = tagArray[result.value]
+                // update tag input value
+                tempTag.children[1].setAttribute('value', result.value)
+
+                obj.parentNode.lastElementChild.before(tempTag)
+            }
+        })
+    }
+
+    function removeTag(obj, e) {
+        e.preventDefault()
+
+        var tagIndex = obj.nextElementSibling.id.slice(obj.nextElementSibling.id.indexOf('tag') + 3)
+        var stampIndex = obj.nextElementSibling.id.slice(obj.nextElementSibling.id.indexOf('stamp') + 5, obj.nextElementSibling.id.indexOf('category'))
+        var categoryIndex = obj.nextElementSibling.id.slice(obj.nextElementSibling.id.indexOf('category') + 8, obj.nextElementSibling.id.indexOf('tag'))
+        var tagContainer = obj.parentNode.parentNode
+
+        for (i = parseInt(tagIndex) + 1; i < tagContainer.childElementCount - 1; i++) {
+            tagContainer.children[i].children[1].id = tagContainer.children[i].children[1].id.slice(0, tagContainer.children[i].children[1].id.indexOf('tag') + 3) + (i - 1)
+            tagContainer.children[i].children[1].name = "artifact[stamps][" + stampIndex + "][categories][" + categoryIndex + "][tags][" + (i - 1) + "][id]"
+        }
+
+        obj.parentNode.remove()
+
+    }
+</script>

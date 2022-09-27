@@ -1,0 +1,149 @@
+{{#if isAdmin}}
+{{>adminLeftNav}}
+{{else}}
+{{>studentLeftNav}}
+{{/if}}
+{{!-- Full body right of nav --}}
+<div class="ml-32 min-h-screen bg-ks-light-background dark:bg-ks-dark-background">
+    {{!-- Spot for top nav --}}
+    {{>topNav}}
+    {{!-- Main Content Body --}}
+    <div class="flex flex-col min-h-screen w-full justify-items-center items-center gap-2 py-20">
+        {{!-- if default load --}}
+        {{#if basicResults}}
+        {{#each basicResults}}
+        {{!-- &userQuery={{formData}} --}}
+        <a href="/artifactViewer?id={{stampID}}" class="flex flew-row w-10/12 gap-2">
+            <div class="flex flex-col w-1/4">
+                {{{thumbnail formatType location thumbnail}}}
+            </div>
+            <div class="flex flex-col w-3/4">
+                <h2 class="text-2xl text-ks-light-text dark:text-ks-dark-text">{{artifactTitle}}</h2>
+                <h3 class="text-base text-ks-light-subText dark:text-ks-dark-subText">{{author}} - {{views}} Views</h3>
+                <h3 class="text-sm text-ks-light-subText dark:text-ks-dark-subText">{{description}}</h3>
+                <div class="flex flex-row text-white gap-2 pt-2 flex-wrap min-w-fit">
+                    {{#each categories}}
+                    <div
+                        class="flex flex-row rounded-full py-1 px-2 gap-1 flex-wrap min-h-fit min-w-fit {{#if isMatched}} bg-violet-700 {{else}} bg-violet-500  {{/if}}">
+                        <p class="px-1 min-h-fit min-w-fit">{{catLabel}}</p>
+                        {{#each tags}}
+                        <p
+                            class="rounded-full px-2 min-h-fit min-w-fit {{#if isMatched}} bg-blue-700 {{else}} bg-blue-500 {{/if}}">
+                            {{tagLabel}}</p>
+                        {{/each}}
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </a>
+        {{/each}}
+
+        {{!-- end default load --}}
+        {{else}}
+        {{!-- if search results --}}
+
+        {{!-- For loop exact matches --}}
+        {{#each exactMatchResults}}
+        <a href="/artifactViewer?id={{stampID}}" class="flex flew-row w-10/12 gap-2">
+            <div class="flex flex-col w-1/4">
+                {{{thumbnail formatType location thumbnail}}}
+            </div>
+            <div class="flex flex-col w-3/4">
+                <h2 class="text-2xl text-ks-light-text dark:text-ks-dark-text">{{artifactTitle}}</h2>
+                <h3 class="text-base text-ks-light-subText dark:text-ks-dark-subText">{{author}} - {{{views}}} Views
+                </h3>
+                <h3 class="text-sm text-ks-light-subText dark:text-ks-dark-subText">{{description}}</h3>
+                <div class="flex flex-row text-white gap-2 pt-2 flex-wrap">
+                    {{#each categories}}
+                    <div
+                        class="flex flex-row rounded-full py-1 px-2 gap-1 flex-wrap {{#if isMatched}} bg-violet-700 {{else}} bg-violet-500  {{/if}}">
+                        <p class="px-1">{{catLabel}}</p>
+                        {{#each tags}}
+                        <p class="rounded-full px-2 {{#if isMatched}} bg-blue-700 {{else}} bg-blue-500 {{/if}}">
+                            {{tagLabel}}</p>
+                        {{/each}}
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </a>
+        {{/each}}
+        {{!-- End For loop exact matches --}}
+
+        {{!-- Place ticket --}}
+        <h2 class="text-2xl text-ks-light-text dark:text-ks-dark-text pt-5 w-1/2 text-center">{{exactMatchCount}} media
+            matching
+            your
+            exact
+            query were
+            found. Would you
+            like to make a request?</h2>
+        <button onclick="requestMedia(event, {{userQuery}})"
+            class="bg-orange-500 hover:bg-orange-700 text-white rounded-lg px-3 py-1">Request Media</button>
+        <h2 class="text-2xl text-ks-light-text dark:text-ks-dark-text pb-5 w-1/2 text-center">A media request may take a
+            few days,
+            we
+            suggest
+            you use
+            the following related resources to try and solve your problem.</h2>
+        {{!-- For loop loose matches --}}
+        {{!-- End For loop loose matches --}}
+        {{#each looseMatchResults}}
+        <a href="/artifactViewer?id={{stampID}}" class="flex flew-row w-10/12 gap-2">
+            <div class="flex flex-col w-1/4">
+                {{{thumbnail formatType location thumbnail}}}
+            </div>
+            <div class="flex flex-col w-3/4">
+                <h2 class="text-2xl text-ks-light-text dark:text-ks-dark-text">{{artifactTitle}}</h2>
+                <h3 class="text-base text-ks-light-subText dark:text-ks-dark-subText">{{author}} - {{views}} Views</h3>
+                <h3 class="text-sm text-ks-light-subText dark:text-ks-dark-subText">{{description}}</h3>
+                <div class="flex flex-row text-white gap-2 pt-2 flex-wrap">
+                    {{#each categories}}
+                    <div
+                        class="flex flex-row rounded-full py-1 px-2 gap-1 flex-wrap {{#if isMatched}} bg-violet-700 {{else}} bg-violet-500  {{/if}}">
+                        <p class="px-1">{{catLabel}}</p>
+                        {{#each tags}}
+                        <p class="rounded-full px-2 {{#if isMatched}} bg-blue-700 {{else}} bg-blue-500 {{/if}}">
+                            {{tagLabel}}</p>
+                        {{/each}}
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        </a>
+        {{/each}}
+        {{!-- end search results --}}
+        {{/if}}
+    </div>
+</div>
+
+<script>
+
+    function requestMedia(e, formData) {
+        e.preventDefault()
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Once media is requested, you cannot undo your request.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, request media'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/createTicketPOST', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        formData: formData
+                    })
+                }).then((res) => {
+                    res.json().then((body) => {
+                        // console.log(body)
+                    })
+                })
+            }
+        })
+    }
+</script>

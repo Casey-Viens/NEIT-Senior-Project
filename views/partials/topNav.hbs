@@ -1,0 +1,369 @@
+<div class="w-full flex flex-col justify-items-center items-center sticky top-0">
+    <div id="fullFormDiv" style="transition: max-height 0.5s ease-out; max-height: 0px;"
+        class="relative z-10 w-full border-b text-ks-light-text dark:text-ks-dark-text bg-ks-light-foreground border-ks-light-border dark:bg-ks-dark-foreground dark:border-ks-dark-border overflow-hidden max-h-0 transition ease-in-out">
+        <form action="searchPagePOST" method="POST" id="searchForm" autocomplete="off"
+            class="flex flex-col ml-4 my-2 space-y-3">
+            <div id="formElements" class="flex flex-col space-y-2">
+                {{#if formData}}
+                {{#each formData.row}}
+                <div id="searchFormRow{{@index}}" class="flex flex-row space-x-2">
+                    <select name="row[{{@index}}][field]" id="field{{@index}}"
+                        class="px-1 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        <option value="Artifacts.title" {{{select field 'Artifacts.title' }}}>title</option>
+                        <option value="Artifacts.author" {{{select field 'Artifacts.author' }}}>author</option>
+                        <option value="catLabel" {{{select field 'catLabel' }}}>category</option>
+                        <option value="tagLabel" {{{select field 'tagLabel' }}}>tag</option>
+                        <option value="Artifacts.formatType" {{{select field 'Artifacts.formatType' }}}>type</option>
+                    </select>
+                    <div id="" class="relative inline-block">
+                        <input type="text" name="row[{{@index}}][input]" id="input{{@index}}" size="50" required
+                            value="{{input}}" oninput="autocompleteOnInput(this)"
+                            onkeydown="autocompleteOnKeydown(this, event)"
+                            class="px-3 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                    </div>
+                    <select name="row[{{@index}}][condition]" id="condition{{@index}}"
+                        class="px-1 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        <option value="AND" {{{select condition 'AND' }}}>AND</option>
+                        <option value="OR" {{{select condition 'OR' }}}>OR</option>
+                    </select>
+                    <button onclick="removeFormFields(this, event)" {{#if ../shortForm}} disabled {{/if}}
+                        class="text-red-500 hover:text-red-700 disabled:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
+                {{/each}}
+                {{else}}
+                <div id="searchFormRow0" class="flex flex-row space-x-2">
+                    <select name="row[0][field]" id="field0"
+                        class="px-1 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        <option value="Artifacts.title">title</option>
+                        <option value="Artifacts.author">author</option>
+                        <option value="catLabel">category</option>
+                        <option value="tagLabel">tag</option>
+                        <option value="Artifacts.formatType">type</option>
+                    </select>
+                    <div id="" class="relative inline-block">
+                        <input type="text" name="row[0][input]" id="input0" size="50" required
+                            oninput="autocompleteOnInput(this)" onkeydown="autocompleteOnKeydown(this, event)"
+                            class="px-3 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                    </div>
+                    <select name="row[0][condition]" id="condition0"
+                        class="px-1 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                    </select>
+                    <button onclick="removeFormFields(this, event)"
+                        class="text-red-500 hover:text-red-700 disabled:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="searchFormRow1" class="flex flex-row space-x-2">
+                    <select name="row[1][field]" id="field1"
+                        class="px-1 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        <option value="Artifacts.title">title</option>
+                        <option value="Artifacts.author">author</option>
+                        <option value="catLabel">category</option>
+                        <option value="tagLabel">tag</option>
+                        <option value="Artifacts.formatType">type</option>
+                    </select>
+                    <div id="" class="relative inline-block">
+                        <input type="text" name="row[1][input]" id="input1" size="50" required
+                            oninput="autocompleteOnInput(this)" onkeydown="autocompleteOnKeydown(this, event)"
+                            class="px-3 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                    </div>
+                    <select name="row[1][condition]" id="condition1"
+                        class="px-1 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                    </select>
+                    <button onclick="removeFormFields(this, event)"
+                        class="text-red-500 hover:text-red-700 disabled:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="searchFormRow2" class="flex flex-row space-x-2">
+                    <select name="row[2][field]" id="field2"
+                        class="px-1 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        <option value="Artifacts.title">title</option>
+                        <option value="Artifacts.author">author</option>
+                        <option value="catLabel">category</option>
+                        <option value="tagLabel">tag</option>
+                        <option value="Artifacts.formatType">type</option>
+                    </select>
+                    <div id="" class="relative inline-block">
+                        <input type="text" name="row[2][input]" id="input2" size="50" required
+                            oninput="autocompleteOnInput(this)" onkeydown="autocompleteOnKeydown(this, event)"
+                            class="px-3 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                    </div>
+                    <select name="row[2][condition]" id="condition2"
+                        class="px-1 py-1 border rounded-md text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                    </select>
+                    <button onclick="removeFormFields(this, event)"
+                        class="text-red-500 hover:text-red-700 disabled:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
+                {{/if}}
+            </div>
+            <div class="flex flex-row space-x-2 items-center">
+                <button type="submit"
+                    class="font-semibold text-white bg-green-500 hover:bg-green-700 rounded-lg px-2 py-1">Search</button>
+                <button class="flex flex-row space-x-2 font-semibold text-blue-500 hover:text-blue-700"
+                    onclick="clearForm(event)">Clear
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" />
+                    </svg>
+                </button>
+                <button id="addFormFieldsButton" class="text-green-500 hover:text-green-700 disabled:hidden"
+                    onclick="addFormFields(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+    </div>
+    <button id="toggleCollapseable" onclick="toggleCollapseable(event)"
+        class="z-20 px-1 absolute -bottom-8 flex mx-auto border border-t-0 text-ks-light-text dark:text-ks-dark-text bg-ks-light-foreground border-ks-light-border dark:bg-ks-dark-foreground dark:border-ks-dark-border">
+        <svg xmlns="http://www.w3.org/2000/svg" id="toggleCollapseableChevron" class="h-8 w-8 transition duration-75"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+    </button>
+</div>
+<script>
+    window.onload = (event) => {
+        document.addEventListener('click', function (e) {
+            autocompleteCloseAllLists(e.target);
+        })
+        getAutoCompleteLists()
+    }
+
+    var autocompleteCurrentFocus;
+
+    var autocompleteLists;
+
+    function getAutoCompleteLists() {
+        //console.log('attempting to get topnav array')
+        fetch('/topNavArrays', {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json'
+            },
+        }).then((res) => {
+            res.json().then((body) => {
+                //console.log('topnav arrays received')
+                autocompleteLists = body.topNavArrays
+                //console.log('autocomplete lists', autocompleteLists)
+            })
+        })
+    }
+
+
+    function autocompleteOnInput(input) {
+        var body = document.getElementById('body')
+        var val = input.value;
+        var inputRect = input.getBoundingClientRect()
+        var top = inputRect.top + inputRect.height
+        var left = inputRect.left
+        autocompleteCloseAllLists();
+        if (!val) { return false }
+        autocompleteCurrentFocus = -1;
+
+        var autocompleteList = document.createElement('DIV');
+        autocompleteList.setAttribute('id', input.id + 'autocomplete-list');
+        autocompleteList.setAttribute('class', 'autocomplete-items');
+        autocompleteList.classList.add('absolute', 'border', 'border-t-0', 'z-50', 'top-full', 'border-ks-light-border', 'dark:border-ks-dark-border', 'overflow-y-auto', 'overflow-x-hidden', 'max-h-44')
+        autocompleteList.style.top = `${top}px`
+        autocompleteList.style.left = `${left}px`
+        body.appendChild(autocompleteList);
+
+
+        //logic to choose list
+        var autocompleteFieldSelector = input.parentNode.previousElementSibling
+        var autocompleteField = autocompleteFieldSelector.options[autocompleteFieldSelector.selectedIndex].text
+        var autocompleteListValues = autocompleteLists[autocompleteField]
+        //end
+        //console.log('autocompleteListValues autocompleteoninput', autocompleteListValues)
+
+        for (i = 0; i < autocompleteListValues.length; i++) {
+            if (autocompleteListValues[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                var autocompleteMatchDiv = document.createElement('DIV')
+                autocompleteMatchDiv.innerHTML = "<strong>" + autocompleteListValues[i].substr(0, val.length) + "</strong>"
+                autocompleteMatchDiv.innerHTML += autocompleteListValues[i].substr(val.length)
+                autocompleteMatchDiv.innerHTML += "<input type='hidden' value='" + autocompleteListValues[i] + "'>"
+                autocompleteMatchDiv.addEventListener('click', function (e) {
+                    input.value = this.getElementsByTagName("input")[0].value
+                    autocompleteCloseAllLists()
+                })
+                autocompleteMatchDiv.classList.add('cursor-pointer', 'border-ks-light-border', 'dark:border-ks-dark-border', 'p-2.5', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive', 'hover:bg-ks-light-foregroundHover', 'dark:hover:bg-ks-dark-foregroundHover', 'text-ks-light-text', 'dark:text-ks-dark-text')
+                autocompleteList.appendChild(autocompleteMatchDiv)
+            }
+        }
+
+    }
+
+    function autocompleteOnKeydown(input, e) {
+        var autocompleteListDiv = document.getElementById(input.id + "autocomplete-list")
+        if (autocompleteListDiv) var autocompleteListDivs = autocompleteListDiv.getElementsByTagName('div')
+        if (e.keyCode == 40) {
+            //Down Key
+            autocompleteCurrentFocus++;
+            autocompleteAddActive(autocompleteListDivs)
+        } else if (e.keyCode == 38) {
+            //Up Key
+            autocompleteCurrentFocus--;
+            autocompleteAddActive(autocompleteListDivs)
+        } else if (e.keyCode == 13) {
+            //Enter Key
+            e.preventDefault();
+            if (autocompleteCurrentFocus > -1) {
+                if (autocompleteListDivs) autocompleteListDivs[autocompleteCurrentFocus].click()
+            }
+        }
+    }
+
+    function autocompleteAddActive(autocompleteList) {
+        if (!autocompleteList) return false;
+
+        autocompleteRemoveActive(autocompleteList);
+        if (autocompleteCurrentFocus >= autocompleteList.length) autocompleteCurrentFocus = 0;
+        if (autocompleteCurrentFocus < 0) autocompleteCurrentFocus = (autocompleteList.length - 1);
+        autocompleteList[autocompleteCurrentFocus].classList.add('autocomplete-active', 'bg-blue-500', 'text-white')
+        autocompleteList[autocompleteCurrentFocus].classList.remove('bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive', 'text-ks-light-text', 'dark:text-ks-dark-text')
+    }
+
+    function autocompleteRemoveActive(autocompleteList) {
+        for (var i = 0; i < autocompleteList.length; i++) {
+            autocompleteList[i].classList.remove('autocomplete-active', 'bg-blue-500', 'text-white')
+            autocompleteList[i].classList.add('bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive', 'text-ks-light-text', 'dark:text-ks-dark-text')
+        }
+    }
+
+    function autocompleteCloseAllLists(element) {
+        var autocompleteList = document.getElementsByClassName('autocomplete-items');
+        for (var i = 0; i < autocompleteList.length; i++) {
+            if (element != autocompleteList[i] && element != autocompleteList[i].previousElementSibling) {
+                autocompleteList[i].parentNode.removeChild(autocompleteList[i]);
+            }
+        }
+    }
+
+
+    function toggleCollapseable(e) {
+        e.preventDefault();
+        var formDiv = document.getElementById('fullFormDiv')
+        /*
+        Solution for animating top nav transition
+         */
+        if (formDiv.style.maxHeight != '0px') {
+            formDiv.style.maxHeight = '0px';
+        } else {
+            formDiv.style.maxHeight = (document.getElementById('fullFormDiv').scrollHeight + 50) + "px"
+        }
+
+        document.getElementById('toggleCollapseableChevron').classList.toggle('rotate-180')
+    }
+
+    function clearForm(e) {
+        e.preventDefault();
+        //document.getElementById('searchForm').reset();
+        var formDiv = document.getElementById('formElements')
+        for (i = 0; i < formDiv.childElementCount; i++){
+            formDiv.children[i].children[1].children[0].value = ''
+        }
+    }
+
+    function removeFormFields(obj, e) {
+        e.preventDefault();
+        var tempFormElementsDiv = obj.parentNode
+        var iterFormElementsDiv = tempFormElementsDiv
+        var formDivIndex
+        var currentElement
+
+        while (iterFormElementsDiv.nextElementSibling != null) {
+            currentElement = iterFormElementsDiv.nextElementSibling
+            formDivIndex = currentElement.id.slice(13)
+
+            currentElement.id = currentElement.id.slice(0, 13) + (formDivIndex - 1)
+            currentElement.children[0].id = currentElement.children[0].id.slice(0, 5) + (formDivIndex - 1)
+            currentElement.children[0].name = currentElement.children[0].name.slice(0, 4) + (formDivIndex - 1) + currentElement.children[0].name.slice(5,)
+            currentElement.children[1].children[0].id = currentElement.children[1].children[0].id.slice(0, 5) + (formDivIndex - 1)
+            currentElement.children[1].children[0].name = currentElement.children[1].children[0].name.slice(0, 4) + (formDivIndex - 1) + currentElement.children[1].children[0].name.slice(5,)
+            currentElement.children[2].id = currentElement.children[2].id.slice(0, 9) + (formDivIndex - 1)
+            currentElement.children[2].name = currentElement.children[2].name.slice(0, 4) + (formDivIndex - 1) + currentElement.children[2].name.slice(5,)
+
+            iterFormElementsDiv = currentElement
+        }
+
+        var formDiv = tempFormElementsDiv.parentNode
+        formDiv.removeChild(tempFormElementsDiv)
+
+        if (formDiv.childElementCount == 1) {
+            formDiv.children[0].children[3].disabled = true
+        }
+
+        if (document.getElementById('addFormFieldsButton').disabled) {
+            document.getElementById('addFormFieldsButton').disabled = false
+        }
+
+
+        //Used to enable top nav transition animation
+        document.getElementById('fullFormDiv').style.maxHeight = (document.getElementById('fullFormDiv').scrollHeight + 50) + "px"
+
+    }
+
+    function addFormFields(e) {
+        e.preventDefault();
+        var formDiv = document.getElementById('formElements')
+        var tempFormElementsDiv
+        var formDivLength = formDiv.childElementCount
+
+        if (formDiv.childElementCount == 1) {
+            formDiv.children[0].children[3].disabled = false
+        }
+
+        tempFormElementsDiv = formDiv.children[0].cloneNode(true)
+        tempFormElementsDiv.id = tempFormElementsDiv.id.slice(0, 13) + formDivLength
+        tempFormElementsDiv.children[0].id = tempFormElementsDiv.children[0].id.slice(0, 5) + formDivLength
+        tempFormElementsDiv.children[0].name = tempFormElementsDiv.children[0].name.slice(0, 4) + formDivLength + tempFormElementsDiv.children[0].name.slice(5,)
+        tempFormElementsDiv.children[1].children[0].id = tempFormElementsDiv.children[1].children[0].id.slice(0, 5) + formDivLength
+        tempFormElementsDiv.children[1].children[0].name = tempFormElementsDiv.children[1].children[0].name.slice(0, 4) + formDivLength + tempFormElementsDiv.children[1].children[0].name.slice(5,)
+        tempFormElementsDiv.children[1].children[0].value = ""
+        tempFormElementsDiv.children[2].id = tempFormElementsDiv.children[2].id.slice(0, 9) + formDivLength
+        tempFormElementsDiv.children[2].name = tempFormElementsDiv.children[2].name.slice(0, 4) + formDivLength + tempFormElementsDiv.children[2].name.slice(5,)
+
+        formDiv.appendChild(tempFormElementsDiv)
+
+        if (formDiv.childElementCount == 10) {
+            document.getElementById('addFormFieldsButton').disabled = true
+        }
+
+
+        //Used to enable top nav transition animation
+        document.getElementById('fullFormDiv').style.maxHeight = (document.getElementById('fullFormDiv').scrollHeight + 50) + "px"
+
+    }
+</script>

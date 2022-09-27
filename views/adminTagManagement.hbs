@@ -1,0 +1,542 @@
+{{>adminLeftNav}}
+<div class="ml-32 min-h-screen bg-ks-light-background dark:bg-ks-dark-background">
+    {{>topNav}}
+    <div class="flex flex-col min-h-screen w-full py-20 items-center">
+        {{!-- Tabs --}}
+        <div class="flex flex-row space-x-1 pl-4 w-9/12">
+            {{!-- Category Tab --}}
+            <div id="categoryTab" onClick="selectCategoryTab(this)"
+                class="active px-3 py-2 border-x border-t border-ks-light-border dark:border-ks-dark-border rounded-t-lg bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive hover:bg-ks-light-foregroundHover hover:dark:bg-ks-dark-foregroundHover font-medium text-ks-light-text dark:text-ks-dark-text">
+                Category
+            </div>
+            {{!-- All Tags Tab --}}
+            <div id="allTagsTab" onClick="selectAllTagsTab(this)"
+                class="px-3 py-2 border-x border-t border-ks-light-border dark:border-ks-dark-border rounded-t-lg bg-ks-light-background dark:bg-ks-dark-background hover:bg-ks-light-foregroundHover hover:dark:bg-ks-dark-foregroundHover font-medium text-ks-light-text dark:text-ks-dark-text">
+                All Tags
+            </div>
+        </div>
+        <div id="folderContainer" class="flex flex-col w-9/12">
+            {{!-- Containers --}}
+            <div id="categoryFolder"
+                class="flex flex-col w-full border border-ks-light-border dark:border-ks-dark-border rounded-t-lg ">
+                {{!-- Folder Header --}}
+                <div
+                    class="flex flex-row pl-3 rounded-t-lg py-3 w-full border-b border-ks-light-border dark:border-ks-dark-border space-x-2 bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive">
+                    <select id="categoryList" onchange="selectCategory(this)"
+                        class="px-3 py-1 rounded-md border text-ks-light-text border-ks-light-border dark:border-ks-dark-border">
+                        {{!-- CVGS Start Category Loop --}}
+                        {{#each categories}}
+                        <option value="{{this.categoryID}}">{{this.categoryName}}</option>
+                        {{/each}}
+                        {{!-- CVGS End Category Loop --}}
+                    </select>
+                    <button onclick="editCategory(event)"
+                        class="bg-orange-500 hover:bg-orange-700 text-white rounded-lg px-3 py-2 my-auto">Edit
+                        Category</button>
+                    <button onclick="createCategory(event)"
+                        class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                        Category</button>
+                    <button onclick="createTag(event)"
+                        class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                        Tag</button>
+                    <button onclick="deleteCategory(event)"
+                        class="bg-red-500 hover:bg-red-700 text-white rounded-lg px-3 py-2 my-auto">Delete
+                        Category</button>
+                </div>
+                {{!-- Category Tag Folder Container --}}
+                <div id="categoryTagFolderContainer" class="flex w-full">
+                    {{!-- Category Tag Folder Contents --}}
+                    {{!-- CVGS Start Category Loop --}}
+                    {{#each categories as |cat catIndex|}}
+                    <div id="{{cat.categoryName}}" class="{{{adminCatAndTagManagementisActive catIndex}}} flex-row w-full flex-wrap p-3 gap-1 min-h-fit">
+                        {{!-- Tags --}}
+                        {{!-- CVGS Start Inner Tag Loop --}}
+                        {{#each cat.tags}}
+                        <div onclick="editTag(this)"
+                            class="flex hover:cursor-pointer rounded-full px-2 bg-blue-400 text-white flex-row items-center space-x-1 my-1 py-1">
+                            {{this.tagName}} <svg onclick="removeTag(this, event)" xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6 text-red-500 hover:cursor-pointer hover:text-red-600" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <input value='{{this.tagID}}' type="number" disabled="true" class="hidden">
+                        </div>
+                        {{/each}}
+                        {{!-- CVGS End Inner Tag Loop --}}
+                        <button onclick="addTag(this,event)"
+                            class="bg-green-500 hover:bg-green-700 text-white rounded-full px-3 py-1 min-w-fit my-1">Add
+                            Tag</button>
+                        {{!-- End Tags --}}
+                    </div>
+                    {{/each}}
+                    {{!-- CVGS End Category Loop --}}
+                </div>
+            </div>
+            {{!-- All Tags Container --}}
+            <div id="allTags"
+                class="hidden flex-col w-full border border-ks-light-border dark:border-ks-dark-border rounded-t-lg ">
+                {{!-- Folder Header --}}
+                <div
+                    class="flex flex-row pl-3 rounded-t-lg py-3 w-full border-b border-ks-light-border dark:border-ks-dark-border space-x-2 bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive">
+                    <button onclick="createTag(event)"
+                        class="bg-green-500 hover:bg-green-700 text-white rounded-lg px-3 py-2 my-auto">Create
+                        Tag</button>
+                </div>
+                {{!-- Tags Folder --}}
+                <div id="allTagsFolder" class="flex flex-row w-full flex-wrap p-3 gap-1">
+                    {{!-- Tags --}}
+                    {{!-- CVGS  Start Tag Loop --}}
+                    {{#each tags}}
+                    <div onclick="editTag(this)"
+                        class="flex hover:cursor-pointer rounded-full px-2 bg-blue-400 text-white flex-row items-center space-x-1 my-1 py-1">
+                        {{this.tagLabel}} <svg onclick="deleteTag(this, event)" xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 text-red-500 hover:cursor-pointer hover:text-red-600" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <input value='{{this.tagID}}' type="number" disabled="true" class="hidden">
+                    </div>
+                    {{/each}}
+                    {{!-- CVGS End Tag Loop --}}
+                    {{!-- End Tags --}}
+                </div>
+            </div>
+        </div>
+        {{!-- Hidden Templates --}}
+        <div id="hiddenCategoryTag" onclick="editTag(this)"
+            class="hidden hover:cursor-pointer rounded-full px-2 bg-blue-400 text-white flex-row items-center space-x-1 my-1 py-1">
+            Tag <svg onclick="removeTag(this, event)" xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 text-red-500 hover:cursor-pointer hover:text-red-600" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <input type="number" disabled="true" class="hidden">
+        </div>
+        <div id="hiddenTag" onclick="editTag(this)"
+            class="hidden hover:cursor-pointer rounded-full px-2 bg-blue-400 text-white flex-row items-center space-x-1 my-1 py-1">
+            Tag <svg onclick="deleteTag(this, event)" xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 text-red-500 hover:cursor-pointer hover:text-red-600" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <input type="number" disabled="true" class="hidden">
+        </div>
+        <div id="hiddenCategoryTagFolder" class="hidden flex-row w-full flex-wrap p-3 space-x-1 min-h-fit">
+            {{!-- Tags --}}
+            <button onclick="addTag(this,event)"
+                class="bg-green-500 hover:bg-green-700 text-white rounded-full px-3 py-1 min-w-fit my-1">Add
+                Tag</button>
+            {{!-- End Tags --}}
+        </div>
+    </div>
+</div>
+
+<script>
+
+    /*
+        var tagArray =
+        {
+            'id': 'tagName',
+            1: 'sin',
+            2: 'cos',
+            3: 'tan',
+            4: 'multiply',
+            5: 'divide',
+            6: 'mean',
+            7: 'range',
+            8: 'median',
+            9: 'mode'
+        }
+    */
+
+    var categoryArray
+    var tagArray
+
+    window.onload = (event) => {
+
+        getCatandTagArrays()
+    }
+
+    function getCatandTagArrays() {
+        fetch('/adminIndexerCategoriesAndTagsGET', {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json'
+            },
+        }).then((res) => {
+            res.json().then((body) => {
+                var b = body
+                //console.log('catArray: ', b.catArray)
+                //console.log('tagArray: ', b.tagArray)
+                categoryArray = b.catArray
+                tagArray = b.tagArray
+                //console.log('autocomplete lists', autocompleteLists)
+            })
+        })
+    }
+
+    function addTag(obj, e) {
+        e.preventDefault()
+
+        var tagName
+        var tagID
+        var catSelect = document.getElementById('categoryList')
+        var catID = catSelect.value
+
+        Swal.fire({
+            title: 'Select tag to add',
+            input: 'select',
+            inputOptions: tagArray,
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                tagName = tagArray[result.value]
+                tagID = result.value
+                fetch('/addTagToCategoryPost', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tagName: tagName,
+                        tagID: tagID,
+                        catID: catID
+                    })
+                }).then((res) => {
+                    res.json().then((body) => {
+                        var b = body
+                        if (b.success) {
+                            var tempTag = document.getElementById('hiddenCategoryTag').cloneNode(true)
+                            tempTag.classList.replace('hidden', 'flex')
+                            tempTag.firstChild.data = tagName
+                            tempTag.children[1].setAttribute('value', tagID)
+                            tempTag.id = ''
+                            obj.before(tempTag)
+                        }
+                    })
+                })
+
+            }
+        })
+    }
+
+    function editTag(obj) {
+        var tagID = obj.children[1].value
+        var tagName = obj.firstChild.data.trim()
+        var newTagName
+
+        Swal.fire({
+            title: 'Edit tag',
+            input: 'text',
+            inputValue: tagName,
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                newTagName = result.value
+                fetch('/editTagPost', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tagName: newTagName,
+                        tagID: tagID
+                    })
+                }).then((res) => {
+                    res.json().then((body) => {
+                        var b = body
+                        if (b.success) {
+                            obj.firstChild.data = newTagName
+                            tagArray[tagID] = newTagName
+                            window.location.reload(true)
+                            //should probably loop thorugh categories and tags to update tagName
+                        }
+                    })
+                })
+            }
+        })
+    }
+
+    function removeTag(obj, e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        var tagID = obj.parentNode.children[1].value
+        var categorySelect = document.getElementById('categoryList')
+        var categoryID = categorySelect.options[categorySelect.selectedIndex].value
+
+        fetch('/removeTagPost', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                categoryID: categoryID,
+                tagID: tagID
+            })
+        }).then((res) => {
+            res.json().then((body) => {
+                var b = body
+                if (b.success) {
+                    obj.parentNode.remove()
+                }
+            })
+        })
+    }
+
+    function deleteTag(obj, e) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        var tagID = obj.parentNode.children[1].value
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Once deleted, this action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete the tag'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/deleteTagPost', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tagID: tagID
+                    })
+                }).then((res) => {
+                    res.json().then((body) => {
+                        var b = body
+                        if (b.success) {
+                            obj.parentNode.remove()
+                            //tagArray.splice(tagID, 1)
+                            //tagArray.tagID = null
+                            delete tagArray[tagID]
+                            window.location.reload(true)
+                            //should probably loop thorugh categories and tags to update tagName
+                        }
+                    })
+                })
+            }
+        })
+    }
+
+    function selectCategory(obj) {
+        var categoryTagFolderContainer = document.getElementById('categoryTagFolderContainer')
+        var selectedCategory = obj.options[obj.selectedIndex].text
+        var selectedCategoryFolder = document.getElementById(selectedCategory)
+        var activeCategoryTagFolder = categoryTagFolderContainer.querySelector('.active')
+
+        activeCategoryTagFolder.classList.add('hidden')
+        activeCategoryTagFolder.classList.remove('flex', 'active')
+        selectedCategoryFolder.classList.remove('hidden')
+        selectedCategoryFolder.classList.add('active', 'flex')
+    }
+
+    function editCategory(e) {
+        e.preventDefault()
+        var categorySelector = document.getElementById('categoryList')
+        var selectedCategory = categorySelector.options[categorySelector.selectedIndex]
+        var selectedCategoryFolder = document.getElementById(selectedCategory.text)
+        var newCategoryName
+        var categoryID = categorySelector.options[categorySelector.selectedIndex].value
+
+
+        Swal.fire({
+            title: 'Edit category',
+            input: 'text',
+            inputValue: selectedCategory.text,
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                newCategoryName = result.value
+                fetch('/editCategoryPost', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        categoryName: newCategoryName,
+                        categoryID: categoryID
+                    })
+                }).then((res) => {
+                    res.json().then((body) => {
+                        var b = body
+                        if (b.success) {
+                            selectedCategoryFolder.id = newCategoryName
+                            selectedCategory.text = newCategoryName
+
+                        }
+                    })
+                })
+            }
+        })
+
+    }
+
+    function createCategory(e) {
+        e.preventDefault()
+
+        Swal.fire({
+            title: 'Enter new category',
+            input: 'text',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to provide a category.'
+                } else if (Object.values(categoryArray).includes(value)) {
+                    return 'This category already exists.'
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/createCategoryPost', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        categoryName: result.value
+                    })
+                }).then((res) => {
+                    res.json().then((body) => {
+                        var b = body
+                        //console.log('Data from route', b.data)
+                        categoryArray[b.data.id] = b.data.categoryName
+
+                        var categoryTagFolderContainer = document.getElementById('categoryTagFolderContainer')
+                        var categorySelector = document.getElementById('categoryList')
+                        var tempCategoryFolder = document.getElementById('hiddenCategoryTagFolder').cloneNode(true)
+                        var newOption = document.createElement('option')
+                        tempCategoryFolder.id = b.data.categoryName
+                        categoryTagFolderContainer.appendChild(tempCategoryFolder)
+                        newOption.text = b.data.categoryName
+                        newOption.value = b.data.id
+
+                        categorySelector.add(newOption)
+
+                    })
+                })
+            }
+        })
+    }
+
+    function createTag(e) {
+        e.preventDefault()
+
+        Swal.fire({
+            title: 'Enter new tag',
+            input: 'text',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to provide a tag.'
+                } else if (Object.values(tagArray).includes(value)) {
+                    return 'This tag already exists.'
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/createTagPost', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tagName: result.value
+                    })
+                }).then((res) => {
+                    res.json().then((body) => {
+                        var b = body
+                        tagArray[b.data.id] = b.data.tagName
+                        var allTagsFolder = document.getElementById('allTagsFolder')
+                        var tempTag = document.getElementById('hiddenTag').cloneNode(true)
+                        tempTag.classList.replace('hidden', 'flex')
+                        tempTag.firstChild.data = b.data.tagName
+                        tempTag.children[1].setAttribute('value', b.data.id)
+                        tempTag.id = ''
+                        allTagsFolder.appendChild(tempTag)
+                    })
+                })
+            }
+        })
+    }
+
+    function deleteCategory(e) {
+        e.preventDefault()
+
+        var categorySelector = document.getElementById('categoryList')
+        var selectedCategory = categorySelector.options[categorySelector.selectedIndex]
+        var selectedCategoryFolder = document.getElementById(selectedCategory.text)
+        var categoryID = categorySelector.options[categorySelector.selectedIndex].value
+        var newCategoryFolder
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Once deleted, this action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete the category'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/deleteCategoryPost', {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        categoryID: categoryID
+                    })
+                }).then((res) => {
+                    res.json().then((body) => {
+                        var b = body
+                        if (body.success) {
+                            selectedCategoryFolder.remove()
+                            selectedCategory.remove()
+                            categorySelector.options[0].selected = 'selected'
+                            newCategoryFolder = document.getElementById(categorySelector.options[0].text)
+                            newCategoryFolder.classList.replace('hidden', 'flex')
+                        }
+                    })
+                })
+            }
+        })
+    }
+
+    function selectCategoryTab(obj) {
+        if (!obj.classList.contains('active')) {
+            obj.classList.add('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+            obj.classList.remove('bg-ks-light-background', 'dark:bg-ks-dark-background')
+            var allTagsTab = document.getElementById('allTagsTab')
+            allTagsTab.classList.remove('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+            allTagsTab.classList.add('bg-ks-light-background', 'dark:bg-ks-dark-background')
+
+            var categoryFolder = document.getElementById('categoryFolder')
+            var tagsFolder = document.getElementById('allTags')
+            categoryFolder.classList.replace('hidden', 'flex')
+            tagsFolder.classList.replace('flex', 'hidden')
+        }
+    }
+
+    function selectAllTagsTab(obj) {
+        if (!obj.classList.contains('active')) {
+            obj.classList.add('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+            obj.classList.remove('bg-ks-light-background', 'dark:bg-ks-dark-background')
+            var categoryTab = document.getElementById('categoryTab')
+            categoryTab.classList.remove('active', 'bg-ks-light-foregroundActive', 'dark:bg-ks-dark-foregroundActive')
+            categoryTab.classList.add('bg-ks-light-background', 'dark:bg-ks-dark-background')
+
+            var categoryFolder = document.getElementById('categoryFolder')
+            var tagsFolder = document.getElementById('allTags')
+            categoryFolder.classList.replace('flex', 'hidden')
+            tagsFolder.classList.replace('hidden', 'flex')
+        }
+    }
+
+</script>

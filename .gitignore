@@ -1,0 +1,27 @@
+# Ignoring dependencies (can be manually reinstalled with package.json and npm install).
+**/node_modules
+# dotenv environment variable files.
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+# Temporary notes or files.
+.env_CaseyAdminCred
+models/artifactResources*
+models/modelFunctionsStubs.txt
+models/artifactReferences.txt
+models/model_Combined_OldSynchronous.js
+# models/model_Combined.js
+models/model_CombinedPromDemo.js
+models/model_CombinedAsyncWaitDemo.js
+
+
+views/devPage.hbs
+app_server/controllers/resultSetBuilder.js
+models/artifactReferencesCV.docx
+models/artifactResources_Casey
+dump.txt
+utils/passport-config-SyncCopy.js
+
+

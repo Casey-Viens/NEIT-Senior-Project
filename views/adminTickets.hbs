@@ -1,0 +1,72 @@
+{{>adminLeftNav}}
+<div class="ml-32 min-h-screen bg-ks-light-background dark:bg-ks-dark-background">
+    {{>topNav}}
+    <div class="flex flex-col min-h-screen w-full items-center">
+        {{#if ticketCount}}
+        <table class="my-20 table-auto w-10/12 border border-ks-light-border dark:border-ks-dark-border">
+            <thead>
+                <tr
+                    class="text-left bg-ks-light-foregroundActive dark:bg-ks-dark-foregroundActive text-lg font-medium text-ks-light-text dark:text-ks-dark-text">
+                    <th class="py-4 pl-2">Student Name</th>
+                    <th>Ticket Date</th>
+                    <th>Ticket Query</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-base text-ks-light-text dark:text-ks-dark-text">
+                {{!-- Start Handlebars loop here --}}
+                {{#each ticketsResults}}
+                <tr
+                    class="odd:bg-ks-light-background dark:odd:bg-ks-dark-background even:bg-ks-light-foreground dark:even:bg-ks-dark-foreground">
+                    <td class="py-3 pl-2">{{username}}</td>
+                    <td>{{datePlaced}}</td>
+                    <td class="align-middle">
+                        <div class="flex flex-row gap-1 flex-wrap py-1">
+                            {{#each parsedUserSearchQuery}}
+                            <p class="inline-flex items-baseline text-white rounded-full px-2 bg-blue-500">{{field}} -
+                                {{input}}</p>
+                            {{/each}}
+                        </div>
+                    </td>
+                    <td class="min-w-fit align-middle">
+                        <div class="flex flex-row h-full gap-1">
+                            <form action="/adminTicketsPageSearchPOST" method="POST">
+                                <input type="hidden" name="ticketID" value="{{ticketID}}">
+                                <button
+                                    class="rounded-full bg-green-500 hover:bg-green-700 text-white px-3 py-1">Search</button>
+                            </form>
+                            <form action="/adminTicketsPageResolvePOST" method="POST">
+                                <input type="hidden" name="ticketID" value="{{ticketID}}">
+                                <button onclick="resolveClick(this, event)"
+                                    class=" rounded-full bg-red-500 hover:bg-red-700 text-white px-3 py-1">Resolve</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {{/each}}
+                {{!-- End Handlebars loop here --}}
+            </tbody>
+        </table>
+        {{else}}
+        <h2 class="text-ks-light-text dark:text-ks-dark-text my-auto text-2xl">There are currently no tickets.
+            Congratulations.</h2>
+        {{/if}}
+    </div>
+</div>
+<script>
+    function resolveClick(obj, e) {
+        e.preventDefault()
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Once resolved, this action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, resolve the ticket'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                obj.parentNode.submit()
+            }
+        })
+    }
+</script>
